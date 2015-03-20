@@ -2198,6 +2198,196 @@ var AnchorPreview;
     };
 }());
 
+var FontSizeExtension;
+
+(function (window, document) {
+    'use strict';
+
+    function FontSizeDerived() {
+        this.parent = true;
+        this.options = {
+            name: 'fontsize',
+            action: 'fontSize',
+            aria: 'increase/decrease font size',
+            contentDefault: '&#xB1;', // ±
+            contentFA: '<i class="fa fa-text-height"></i>'
+        };
+        this.name = 'fontsize';
+        this.hasForm = true;
+    }
+
+    FontSizeDerived.prototype = {
+
+        // Button and Extension handling
+
+        // Called when the button the toolbar is clicked
+        // Overrides DefaultButton.handleClick
+        handleClick: function (evt) {
+            evt.preventDefault();
+            evt.stopPropagation();
+
+            var selectedParentElement = Selection.getSelectedParentElement(Util.getSelectionRange(this.base.options.ownerDocument));
+            if (selectedParentElement.tagName &&
+                    selectedParentElement.tagName.toLowerCase() === 'a') {
+                return this.base.execAction('unlink');
+            }
+
+            if (!this.isDisplayed()) {
+                this.showForm();
+            }
+
+            return false;
+        },
+
+        // Called by medium-editor to append form to the toolbar
+        getForm: function () {
+            if (!this.form) {
+                this.form = this.createForm();
+            }
+            return this.form;
+        },
+
+        // Used by medium-editor when the default toolbar is to be displayed
+        isDisplayed: function () {
+            return this.getForm().style.display === 'block';
+        },
+
+        hideForm: function () {
+            this.getForm().style.display = 'none';
+            this.getInput().value = '';
+        },
+
+        showForm: function (link_value) {
+            var input = this.getInput();
+
+            this.base.saveSelection();
+            this.base.hideToolbarDefaultActions();
+            this.getForm().style.display = 'block';
+            this.base.setToolbarPosition();
+
+            input.value = link_value || '';
+            input.focus();
+        },
+
+        // Called by core when tearing down medium-editor (deactivate)
+        deactivate: function () {
+            if (!this.form) {
+                return false;
+            }
+
+            if (this.form.parentNode) {
+                this.form.parentNode.removeChild(this.form);
+            }
+
+            delete this.form;
+        },
+
+        // core methods
+
+        doFormSave: function () {
+            this.base.restoreSelection();
+            this.base.checkSelection();
+        },
+
+        doFormCancel: function () {
+            this.base.restoreSelection();
+            this.clearFontSize();
+            this.base.checkSelection();
+        },
+
+        // form creation and event handling
+
+        createForm: function () {
+            var doc = this.base.options.ownerDocument,
+                form = doc.createElement('div'),
+                input = doc.createElement('input'),
+                close = doc.createElement('a'),
+                save = doc.createElement('a');
+
+            // Font Size Form (div)
+            form.className = 'medium-editor-toolbar-form';
+            form.id = 'medium-editor-toolbar-form-fontsize-' + this.base.id;
+
+            // Handle clicks on the form itself
+            this.base.on(form, 'click', this.handleFormClick.bind(this));
+
+            // Add font size slider
+            input.setAttribute('type', 'range');
+            input.setAttribute('min', '1');
+            input.setAttribute('max', '7');
+            input.className = 'medium-editor-toolbar-input';
+            form.appendChild(input);
+
+            // Handle typing in the textbox
+            this.base.on(input, 'change', this.handleSliderChange.bind(this));
+
+            // Add save buton
+            save.setAttribute('href', '#');
+            save.className = 'medium-editor-toobar-save';
+            save.innerHTML = this.base.options.buttonLabels === 'fontawesome' ?
+                             '<i class="fa fa-check"></i>' :
+                             '&#10003;';
+            form.appendChild(save);
+
+            // Handle save button clicks (capture)
+            this.base.on(save, 'click', this.handleSaveClick.bind(this), true);
+
+            // Add close button
+            close.setAttribute('href', '#');
+            close.className = 'medium-editor-toobar-close';
+            close.innerHTML = this.base.options.buttonLabels === 'fontawesome' ?
+                              '<i class="fa fa-times"></i>' :
+                              '&times;';
+            form.appendChild(close);
+
+            // Handle close button clicks
+            this.base.on(close, 'click', this.handleCloseClick.bind(this));
+
+            return form;
+        },
+
+        getInput: function () {
+            return this.getForm().querySelector('input.medium-editor-toolbar-input');
+        },
+
+        clearFontSize: function () {
+            this.base.getSelectionEls().forEach(function (el) {
+                if (el.tagName === 'FONT' && el.hasAttribute('size')) {
+                    el.removeAttribute('size');
+                }
+            });
+        },
+
+        handleSliderChange: function (event) {
+            var size = this.getInput().value;
+            if (size === '4') {
+                this.clearFontSize();
+            } else {
+                this.base.fontSize({size: size});
+            }
+        },
+
+        handleFormClick: function (event) {
+            // make sure not to hide form when clicking inside the form
+            event.stopPropagation();
+        },
+
+        handleSaveClick: function (event) {
+            // Clicking Save -> create the font size
+            event.preventDefault();
+            this.doFormSave();
+        },
+
+        handleCloseClick: function (event) {
+            // Click Close -> close the form
+            event.preventDefault();
+            this.doFormCancel();
+        }
+    };
+
+    FontSizeExtension = Util.derives(DefaultButton, FontSizeDerived);
+}(window, document));
+
 var Toolbar;
 
 (function () {
@@ -3174,6 +3364,9 @@ function MediumEditor(elements, options) {
             } else if (buttonName === 'anchor') {
                 ext = initExtension(new AnchorExtension(), buttonName, this);
                 this.commands.push(ext);
+            } else if (buttonName === 'fontsize') {
+                ext = initExtension(new FontSizeExtension(), buttonName, this);
+                this.commands.push(ext);
             } else if (ButtonsData.hasOwnProperty(buttonName)) {
                 ext = new DefaultButton(ButtonsData[buttonName], this);
                 this.commands.push(ext);
@@ -3205,6 +3398,10 @@ function MediumEditor(elements, options) {
             return Util.execFormatBlock(this.options.ownerDocument, match[1]);
         }
 
+        if (action === 'fontSize') {
+            return this.fontSize(opts);
+        }
+
         if (action === 'createLink') {
             return this.createLink(opts);
         }
@@ -3220,6 +3417,7 @@ function MediumEditor(elements, options) {
         ButtonsData: ButtonsData,
         DefaultButton: DefaultButton,
         AnchorExtension: AnchorExtension,
+        FontSizeExtension: FontSizeExtension,
         Toolbar: Toolbar,
         AnchorPreview: AnchorPreview
     };
@@ -3604,6 +3802,19 @@ function MediumEditor(elements, options) {
             sel = this.options.contentWindow.getSelection();
             sel.removeAllRanges();
             sel.addRange(range);
+        },
+
+        getSelectionEls: function () {
+            var selection = window.getSelection(),
+                selectionEls = selection.getRangeAt(0).commonAncestorContainer.getElementsByTagName('*');
+
+            return [].filter.call(selectionEls, function (el) {
+                return selection.containsNode(el, true);
+            });
+        },
+
+        fontSize: function (opts) {
+            return this.options.ownerDocument.execCommand('fontSize', false, opts.size);
         },
 
         createLink: function (opts) {

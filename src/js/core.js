@@ -1,5 +1,5 @@
 /*global FileReader, Util, ButtonsData, DefaultButton,
- PasteHandler, Selection, AnchorExtension,
+ PasteHandler, Selection, AnchorExtension, FontSizeExtension,
  Toolbar, AnchorPreview, Events, Placeholders */
 
 function MediumEditor(elements, options) {
@@ -345,6 +345,9 @@ function MediumEditor(elements, options) {
             } else if (buttonName === 'anchor') {
                 ext = initExtension(new AnchorExtension(), buttonName, this);
                 this.commands.push(ext);
+            } else if (buttonName === 'fontsize') {
+                ext = initExtension(new FontSizeExtension(), buttonName, this);
+                this.commands.push(ext);
             } else if (ButtonsData.hasOwnProperty(buttonName)) {
                 ext = new DefaultButton(ButtonsData[buttonName], this);
                 this.commands.push(ext);
@@ -376,6 +379,10 @@ function MediumEditor(elements, options) {
             return Util.execFormatBlock(this.options.ownerDocument, match[1]);
         }
 
+        if (action === 'fontSize') {
+            return this.fontSize(opts);
+        }
+
         if (action === 'createLink') {
             return this.createLink(opts);
         }
@@ -391,6 +398,7 @@ function MediumEditor(elements, options) {
         ButtonsData: ButtonsData,
         DefaultButton: DefaultButton,
         AnchorExtension: AnchorExtension,
+        FontSizeExtension: FontSizeExtension,
         Toolbar: Toolbar,
         AnchorPreview: AnchorPreview
     };
@@ -775,6 +783,19 @@ function MediumEditor(elements, options) {
             sel = this.options.contentWindow.getSelection();
             sel.removeAllRanges();
             sel.addRange(range);
+        },
+
+        getSelectionEls: function () {
+            var selection = window.getSelection(),
+                selectionEls = selection.getRangeAt(0).commonAncestorContainer.getElementsByTagName('*');
+
+            return [].filter.call(selectionEls, function (el) {
+                return selection.containsNode(el, true);
+            });
+        },
+
+        fontSize: function (opts) {
+            return this.options.ownerDocument.execCommand('fontSize', false, opts.size);
         },
 
         createLink: function (opts) {
