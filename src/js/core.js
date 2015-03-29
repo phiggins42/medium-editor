@@ -790,9 +790,20 @@ function MediumEditor(elements, options) {
 
         getSelectionEls: function () {
             var selection = window.getSelection(),
-                selectionEls = selection.getRangeAt(0).commonAncestorContainer.getElementsByTagName('*');
+                range;
 
-            return [].filter.call(selectionEls, function (el) {
+            if (!selection.rangeCount) {
+                return [];
+            }
+
+            range = selection.getRangeAt(0);
+
+            if (!range.commonAncestorContainer ||
+                    range.commonAncestorContainer.nodeType === 3) {
+                return [];
+            }
+
+            return [].filter.call(range.commonAncestorContainer.getElementsByTagName('*'), function (el) {
                 return selection.containsNode(el, true);
             });
         },
