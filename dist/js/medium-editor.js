@@ -2200,7 +2200,7 @@ var AnchorPreview;
 
 var FontSizeExtension;
 
-(function (window, document) {
+(function () {
     'use strict';
 
     function FontSizeDerived() {
@@ -2358,7 +2358,7 @@ var FontSizeExtension;
             });
         },
 
-        handleSliderChange: function (event) {
+        handleSliderChange: function () {
             var size = this.getInput().value;
             if (size === '4') {
                 this.clearFontSize();
@@ -2386,7 +2386,7 @@ var FontSizeExtension;
     };
 
     FontSizeExtension = Util.derives(DefaultButton, FontSizeDerived);
-}(window, document));
+}());
 
 var Toolbar;
 

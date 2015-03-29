@@ -1,9 +1,9 @@
 /*global MediumEditor, describe, it, expect, spyOn,
      afterEach, beforeEach, selectElementContents,
-     jasmine, fireEvent, console, tearDown,
-     selectElementContentsAndFire, xit */
+     jasmine, fireEvent, tearDown,
+     selectElementContentsAndFire */
 
-fdescribe('Font Size Button TestCase', function () {
+describe('Font Size Button TestCase', function () {
     'use strict';
 
     beforeEach(function () {
