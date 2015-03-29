@@ -43,14 +43,17 @@ describe('Font Size Button TestCase', function () {
                 button,
                 input;
 
-            selectElementContents(editor.elements[0]);
+            selectElementContentsAndFire(editor.elements[0]);
             button = editor.toolbar.getToolbarElement().querySelector('[data-action="fontSize"]');
             fireEvent(button, 'click');
+
             input = editor.getExtensionByName('fontsize').getInput();
             input.value = '7';
+            selectElementContents(this.el);
             fireEvent(input, 'change');
+
             expect(editor.fontSize).toHaveBeenCalled();
-            expect(this.el.innerHTML).toBe('<font size="7">lorem ipsum</font>');
+            expect(this.el.innerHTML).toMatch(/^<font [^>]*size="7"[^>]*>lorem ipsum<\/font>$/);
         });
         it('should revert font size when slider value is set to 4', function () {
             spyOn(MediumEditor.prototype, 'fontSize').and.callThrough();
@@ -60,14 +63,20 @@ describe('Font Size Button TestCase', function () {
                 button,
                 input;
 
-            selectElementContents(editor.elements[0]);
+            selectElementContentsAndFire(editor.elements[0]);
             button = editor.toolbar.getToolbarElement().querySelector('[data-action="fontSize"]');
             fireEvent(button, 'click');
+
             input = fontSizeExtension.getInput();
-            input.value = '7';
+            input.value = '1';
+            selectElementContents(editor.elements[0]);
             fireEvent(input, 'change');
             expect(editor.fontSize).toHaveBeenCalled();
+            expect(fontSizeExtension.clearFontSize).not.toHaveBeenCalled();
+            expect(this.el.innerHTML).toMatch(/^<font [^>]*size="1"[^>]*>lorem ipsum<\/font>$/);
+
             input.value = '4';
+            selectElementContents(editor.elements[0]);
             fireEvent(input, 'change');
             expect(this.el.innerHTML).toBe('lorem ipsum');
             expect(fontSizeExtension.clearFontSize).toHaveBeenCalled();
@@ -83,9 +92,10 @@ describe('Font Size Button TestCase', function () {
                 input,
                 cancel;
 
-            selectElementContents(editor.elements[0]);
+            selectElementContentsAndFire(editor.elements[0]);
             button = editor.toolbar.getToolbarElement().querySelector('[data-action="fontSize"]');
             cancel = fontSizeExtension.getForm().querySelector('a.medium-editor-toobar-close');
+
             fireEvent(button, 'click');
             expect(fontSizeExtension.isDisplayed()).toBe(true);
             input = editor.getExtensionByName('fontsize').getInput();
