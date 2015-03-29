@@ -1,4 +1,4 @@
-/*global Util, Selection, DefaultButton */
+/*global Util, DefaultButton, AnchorExtension */
 
 var FontSizeExtension;
 
@@ -20,72 +20,21 @@ var FontSizeExtension;
 
     FontSizeDerived.prototype = {
 
-        // Button and Extension handling
-
-        // Called when the button the toolbar is clicked
-        // Overrides DefaultButton.handleClick
-        handleClick: function (evt) {
-            evt.preventDefault();
-            evt.stopPropagation();
-
-            var selectedParentElement = Selection.getSelectedParentElement(Util.getSelectionRange(this.base.options.ownerDocument));
-            if (selectedParentElement.tagName &&
-                    selectedParentElement.tagName.toLowerCase() === 'a') {
-                return this.base.execAction('unlink');
-            }
-
-            if (!this.isDisplayed()) {
-                this.showForm();
-            }
-
-            return false;
-        },
-
-        // Called by medium-editor to append form to the toolbar
-        getForm: function () {
-            if (!this.form) {
-                this.form = this.createForm();
-            }
-            return this.form;
-        },
-
-        // Used by medium-editor when the default toolbar is to be displayed
-        isDisplayed: function () {
-            return this.getForm().style.display === 'block';
-        },
-
-        hideForm: function () {
-            this.getForm().style.display = 'none';
-            this.getInput().value = '';
-        },
-
-        showForm: function (link_value) {
-            var input = this.getInput();
-
-            this.base.saveSelection();
-            this.base.hideToolbarDefaultActions();
-            this.getForm().style.display = 'block';
-            this.base.setToolbarPosition();
-
-            input.value = link_value || '';
-            input.focus();
-        },
-
-        // Called by core when tearing down medium-editor (deactivate)
-        deactivate: function () {
-            if (!this.form) {
-                return false;
-            }
-
-            if (this.form.parentNode) {
-                this.form.parentNode.removeChild(this.form);
-            }
-
-            delete this.form;
-        },
+        // these are 100% c/p from AnchorExtension
+        formSaveLabel: AnchorExtension.prototype.formSaveLabel,
+        formCloseLabel: AnchorExtension.prototype.formCloseLabel,
+        handleClick: AnchorExtension.prototype.handleClick,
+        getForm: AnchorExtension.prototype.getForm,
+        isDisplayed: AnchorExtension.prototype.isDisplayed,
+        hideForm: AnchorExtension.prototype.hideForm,
+        showForm: AnchorExtension.prototype.showForm,
+        deactivate: AnchorExtension.prototype.deactivate,
+        getInput: AnchorExtension.prototype.getInput,
+        handleFormClick: AnchorExtension.prototype.handleFormClick,
+        handleSaveClick: AnchorExtension.prototype.handleSaveClick,
+        handleCloseClick: AnchorExtension.prototype.handleCloseClick,
 
         // core methods
-
         doFormSave: function () {
             this.base.restoreSelection();
             this.base.checkSelection();
@@ -128,7 +77,7 @@ var FontSizeExtension;
             save.className = 'medium-editor-toobar-save';
             save.innerHTML = this.base.options.buttonLabels === 'fontawesome' ?
                              '<i class="fa fa-check"></i>' :
-                             '&#10003;';
+                             this.formSaveLabel;
             form.appendChild(save);
 
             // Handle save button clicks (capture)
@@ -139,17 +88,13 @@ var FontSizeExtension;
             close.className = 'medium-editor-toobar-close';
             close.innerHTML = this.base.options.buttonLabels === 'fontawesome' ?
                               '<i class="fa fa-times"></i>' :
-                              '&times;';
+                              this.formCloseLabel;
             form.appendChild(close);
 
             // Handle close button clicks
             this.base.on(close, 'click', this.handleCloseClick.bind(this));
 
             return form;
-        },
-
-        getInput: function () {
-            return this.getForm().querySelector('input.medium-editor-toolbar-input');
         },
 
         clearFontSize: function () {
@@ -167,24 +112,8 @@ var FontSizeExtension;
             } else {
                 this.base.fontSize({size: size});
             }
-        },
-
-        handleFormClick: function (event) {
-            // make sure not to hide form when clicking inside the form
-            event.stopPropagation();
-        },
-
-        handleSaveClick: function (event) {
-            // Clicking Save -> create the font size
-            event.preventDefault();
-            this.doFormSave();
-        },
-
-        handleCloseClick: function (event) {
-            // Click Close -> close the form
-            event.preventDefault();
-            this.doFormCancel();
         }
+
     };
 
     FontSizeExtension = Util.derives(DefaultButton, FontSizeDerived);
