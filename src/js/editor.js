@@ -240,16 +240,16 @@ define([
                 this.saveSelection();
                 // Select all of the contents before calling the action
                 this.selectAllContents();
-                result = execActionInternal.call(this, match[1], opts);
+                result = core.execAction.call(this, match[1], opts);
                 // Restore the previous selection
                 this.restoreSelection();
             } else {
-                result = execActionInternal.call(this, action, opts);
+                result = core.execAction.call(this, action, opts);
             }
 
             // do some DOM clean-up for known browser issues after the action
             if (action === 'insertunorderedlist' || action === 'insertorderedlist') {
-                Util.cleanListDOM(this.getSelectedParentElement());
+                util.cleanListDOM(this.getSelectedParentElement());
             }
 
             this.checkSelection();
@@ -313,7 +313,7 @@ define([
 
                 // Find element current selection is inside
                 this.elements.forEach(function (el, index) {
-                    if (el === range.startContainer || Util.isDescendant(el, range.startContainer)) {
+                    if (el === range.startContainer || util.isDescendant(el, range.startContainer)) {
                         editableElementIndex = index;
                         return false;
                     }
@@ -393,11 +393,11 @@ define([
                 this.options.ownerDocument.execCommand('createLink', false, opts.url);
 
                 if (this.options.targetBlank || opts.target === '_blank') {
-                    Util.setTargetBlank(Util.getSelectionStart(this.options.ownerDocument));
+                    util.setTargetBlank(util.getSelectionStart(this.options.ownerDocument));
                 }
 
                 if (opts.buttonClass) {
-                    Util.addClassToAnchors(Util.getSelectionStart(this.options.ownerDocument), opts.buttonClass);
+                    util.addClassToAnchors(util.getSelectionStart(this.options.ownerDocument), opts.buttonClass);
                 }
             }
 
