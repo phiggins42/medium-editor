@@ -80,7 +80,19 @@ define([
 
             this.isActive = true;
 
-            //core.initCommands.call(this);
+            this.commands = [];
+            for(var i in this.options.extensions){
+                var ex = this.options.extensions[i];
+                if (ex.init && typeof ex.init === "function") {
+                    ex.init();
+                }
+
+                if (!ex.hasOwnProperty("options")){
+                    ex.options = this.options;
+                }
+
+            }
+
             //core.initElements.call(this);
             //core.attachHandlers.call(this);
 

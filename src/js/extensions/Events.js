@@ -73,8 +73,8 @@ define(["./Base","../selection","../util"], function(Extension, Selection, util)
             switch (name) {
             case 'externalInteraction':
                 // Detecting when focus is lost
-                this.attachDOMEvent(this.options.ownerDocument.body, 'click', this.handleInteraction.bind(this), true);
-                this.attachDOMEvent(this.options.ownerDocument.body, 'focus', this.handleInteraction.bind(this), true);
+                this.attachDOMEvent(this.base.options.ownerDocument.body, 'click', this.handleInteraction.bind(this), true);
+                this.attachDOMEvent(this.base.options.ownerDocument.body, 'focus', this.handleInteraction.bind(this), true);
                 this.listeners[name] = true;
                 break;
             case 'editableClick':
@@ -154,7 +154,7 @@ define(["./Base","../selection","../util"], function(Extension, Selection, util)
 
         handleInteraction: function (event) {
             var isDescendantOfEditorElements = false,
-                selection = this.options.contentWindow.getSelection(),
+                selection = this.base.options.contentWindow.getSelection(),
                 toolbarEl = (this.base.toolbar) ? this.base.toolbar.getToolbarElement() : null,
                 anchorPreview = this.base.getExtensionByName('anchor-preview'),
                 previewEl = (anchorPreview && anchorPreview.getPreviewElement) ? anchorPreview.getPreviewElement() : null,

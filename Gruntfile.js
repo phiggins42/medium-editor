@@ -77,7 +77,7 @@ module.exports = function (grunt) {
                     'spec/vendor/jasmine-jsreporter-script.js'
                 ],
                 polyfills: [
-                    'src/js/polyfills.js'
+                    // 'src/js/polyfills.js'
                 ],
                 styles: 'dist/css/*.css',
                 junit: {
