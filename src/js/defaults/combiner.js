@@ -59,7 +59,7 @@ define([
             if(arg in deprecatedDefaults){
                 util.deprecated(arg, deprecatedDefaults[arg][1], "5.0.0", function(){
                     // attempt to set this to the new known location?
-                })
+                });
             }
         }
 

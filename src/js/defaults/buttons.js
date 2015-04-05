@@ -228,7 +228,7 @@ define([], function(){
         obj[header] = {
             name: header,
             action: function(options){
-                return 'append-' + options.headers[i - 1]
+                return 'append-' + options.headers[i - 1];
             },
             aria: function(options){
                 return options.headers[i - 1];

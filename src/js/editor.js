@@ -4,14 +4,16 @@ define([
     "./extend",
     "./selection",
     "./defaults/combiner",
-    "./core"
+    "./core",
+    "./extensions/Base"
 ], function(
     util,
     polyfills,
     extend,
     Selection,
     defaults,
-    core
+    core,
+    Extension
 ){
 
     "use strict";
@@ -35,6 +37,7 @@ define([
         "version": "4.1.1"
     }).version.split("."));
 
+    Editor.extend = extend;
     Editor.Extension = Extension;
 
     Editor.prototype = {

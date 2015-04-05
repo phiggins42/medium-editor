@@ -1,6 +1,6 @@
 define(["./util"], function(util){
 
-    return function(opts){
+    return function(protoProps){
         // magic extender
         var parent = this, child;
 

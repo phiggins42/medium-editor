@@ -97,6 +97,7 @@ define(["./util"], function(util){
             }
             return selectedParentElement;
         }
+
     };
 
 });

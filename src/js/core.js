@@ -15,15 +15,13 @@ define(["./util"], function(util){
             }
 
             // If element, put into array
-            if (Util.isElement(selector)) {
+            if (util.isElement(selector)) {
                 selector = [selector];
             }
 
             // Convert NodeList (or other array like object) into an array
             return Array.prototype.slice.apply(selector);
         }
-
-
 
     };
 

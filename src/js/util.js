@@ -34,7 +34,7 @@ define([], function(){
 
         derives: function derives(base, derived) {
             this.deprecated("derives", "MediumEditor.extend", "6.0");
-            return MediumEditor.extend.call(base, derived);
+            // return MediumEditor.extend.call(base, derived);
         },
 
         // Find the next node in the DOM tree that represents any text that is being

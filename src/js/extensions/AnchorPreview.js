@@ -8,9 +8,9 @@ define(["./Base"], function(Extension){
         // put the activeAnchor value in the preview
         previewValueSelector: 'i',
 
-        hideDelay: 500
+        hideDelay: 500,
 
-        init: function (instance) {
+        init: function () {
             this.anchorPreview = this.createPreview();
             this.base.options.elementsContainer.appendChild(this.anchorPreview);
             this.attachToEditables();

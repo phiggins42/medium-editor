@@ -13,7 +13,7 @@ module.exports = function (grunt) {
             globalConfig: globalConfig
         },
         srcFiles = [
-            'src/js/util.js',
+            /*'src/js/util.js',
             'src/js/selection.js',
             'src/js/events.js',
             'src/js/button.js',
@@ -23,7 +23,7 @@ module.exports = function (grunt) {
             'src/js/toolbar.js',
             'src/js/placeholders.js',
             'src/js/core.js',
-            'src/js/version.js'
+            'src/js/version.js'*/
         ],
         browsers = [ {
             browserName: "internet explorer",
@@ -268,7 +268,7 @@ module.exports = function (grunt) {
 
     gruntConfig.bump = {
         options: {
-            files: ['bower.json', 'package.json','src/js/version.js'],
+            files: ['bower.json', 'package.json','src/js/editor.js'],
             updateConfigs: [],
             commit: false,
             createTag: false,

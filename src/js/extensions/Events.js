@@ -1,4 +1,4 @@
-define(["./Base"], function(Extension){
+define(["./Base","../selection","../util"], function(Extension, Selection, util){
 
     return Extension.extend({
 
@@ -176,8 +176,8 @@ define(["./Base"], function(Extension){
             }
             // If it's not part of the editor, toolbar, or anchor preview
             if (!isDescendantOfEditorElements &&
-                    (!toolbarEl || (toolbarEl !== event.target && !Util.isDescendant(toolbarEl, event.target))) &&
-                    (!previewEl || (previewEl !== event.target && !Util.isDescendant(previewEl, event.target)))) {
+                    (!toolbarEl || (toolbarEl !== event.target && !util.isDescendant(toolbarEl, event.target))) &&
+                    (!previewEl || (previewEl !== event.target && !util.isDescendant(previewEl, event.target)))) {
                 this.triggerCustomEvent('externalInteraction', event);
             }
         },

@@ -1,4 +1,4 @@
-define(["./Base"], function(Extension){
+define(["./Base","../util","../selection"], function(Extension, util, Selection){
 
     'use strict';
 
@@ -88,13 +88,13 @@ define(["./Base"], function(Extension){
                     paragraphs = event.clipboardData.getData(dataFormatPlain).split(/[\r\n]/g);
                     for (p = 0; p < paragraphs.length; p += 1) {
                         if (paragraphs[p] !== '') {
-                            html += '<p>' + Util.htmlEntities(paragraphs[p]) + '</p>';
+                            html += '<p>' + util.htmlEntities(paragraphs[p]) + '</p>';
                         }
                     }
-                    Util.insertHTMLCommand(this.options.ownerDocument, html);
+                    util.insertHTMLCommand(this.options.ownerDocument, html);
                 } else {
-                    html = Util.htmlEntities(event.clipboardData.getData(dataFormatPlain));
-                    Util.insertHTMLCommand(this.options.ownerDocument, html);
+                    html = util.htmlEntities(event.clipboardData.getData(dataFormatPlain));
+                    util.insertHTMLCommand(this.options.ownerDocument, html);
                 }
             }
         },
@@ -132,7 +132,7 @@ define(["./Base"], function(Extension){
                     switch (workEl.tagName.toLowerCase()) {
                     case 'a':
                         if (this.options.targetBlank) {
-                            Util.setTargetBlank(workEl);
+                            util.setTargetBlank(workEl);
                         }
                         break;
                     case 'p':
@@ -150,7 +150,7 @@ define(["./Base"], function(Extension){
         },
 
         pasteHTML: function (html, options) {
-            options = Util.defaults(options, {
+            options = util.defaults(options, {
                 cleanAttrs: ['class', 'style', 'dir'],
                 cleanTags: ['meta']
             });
@@ -168,11 +168,11 @@ define(["./Base"], function(Extension){
 
             for (i = 0; i < elList.length; i += 1) {
                 workEl = elList[i];
-                Util.cleanupAttrs(workEl, options.cleanAttrs);
-                Util.cleanupTags(workEl, options.cleanTags);
+                util.cleanupAttrs(workEl, options.cleanAttrs);
+                util.cleanupTags(workEl, options.cleanTags);
             }
 
-            Util.insertHTMLCommand(this.options.ownerDocument, fragmentBody.innerHTML.replace(/&nbsp;/g, ' '));
+            util.insertHTMLCommand(this.options.ownerDocument, fragmentBody.innerHTML.replace(/&nbsp;/g, ' '));
         },
 
         isCommonBlock: function (el) {
@@ -237,7 +237,7 @@ define(["./Base"], function(Extension){
                 el = spans[i];
 
                 // bail if span is in contenteditable = false
-                if (Util.traverseUp(el, isCEF)) {
+                if (util.traverseUp(el, isCEF)) {
                     return false;
                 }
 

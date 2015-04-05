@@ -1,4 +1,4 @@
-define(["./Button","../selection"], function(Button, Selection){
+define(["./Button","../selection","../util"], function(Button, Selection, util){
 
     return Button.extend({
 
@@ -8,7 +8,7 @@ define(["./Button","../selection"], function(Button, Selection){
         aria: 'link',
         tagNames: ['a'],
         contentDefault: '<b>#</b>',
-        contentFA: '<i class="fa fa-link"></i>'
+        contentFA: '<i class="fa fa-link"></i>',
 
         // properties
         inputPlaceholder: 'Paste or type a link',
@@ -28,7 +28,7 @@ define(["./Button","../selection"], function(Button, Selection){
             evt.preventDefault();
             evt.stopPropagation();
 
-            var selectedParentElement = Selection.getSelectedParentElement(Util.getSelectionRange(this.base.options.ownerDocument));
+            var selectedParentElement = Selection.getSelectedParentElement(util.getSelectionRange(this.base.options.ownerDocument));
             if (selectedParentElement.tagName &&
                     selectedParentElement.tagName.toLowerCase() === 'a') {
                 return this.base.execAction('unlink');
@@ -74,7 +74,7 @@ define(["./Button","../selection"], function(Button, Selection){
                 template.push(
                     '<input type="checkbox" class="medium-editor-toolbar-anchor-target">',
                     '<label>',
-                    this.base.options.anchorInputCheckboxLabel,
+                    this.anchorInputCheckboxLabel,
                     '</label>'
                 );
             }
@@ -138,7 +138,7 @@ define(["./Button","../selection"], function(Button, Selection){
                 };
 
             if (this.base.options.checkLinkFormat) {
-                opts.url = this.checkLinkFormat(opts.url);
+                opts.url = this.validateLink(opts.url);
             }
 
             if (targetCheckbox && targetCheckbox.checked) {
@@ -148,7 +148,7 @@ define(["./Button","../selection"], function(Button, Selection){
             }
 
             if (buttonCheckbox && buttonCheckbox.checked) {
-                opts.buttonClass = this.base.options.anchorButtonClass;
+                opts.buttonClass = this.anchorButtonClass;
             }
 
             return opts;
@@ -165,7 +165,8 @@ define(["./Button","../selection"], function(Button, Selection){
             this.base.checkSelection();
         },
 
-        checkLinkFormat: function (value) {
+        // ugh, the property is names this, too.
+        validateLink: function (value) {
             var re = /^(https?|ftps?|rtmpt?):\/\/|mailto:/;
             return (re.test(value) ? '' : 'http://') + value;
         },
@@ -215,14 +216,14 @@ define(["./Button","../selection"], function(Button, Selection){
 
         handleTextboxKeyup: function (event) {
             // For ENTER -> create the anchor
-            if (event.keyCode === Util.keyCode.ENTER) {
+            if (event.keyCode === util.keyCode.ENTER) {
                 event.preventDefault();
                 this.doFormSave();
                 return;
             }
 
             // For ESCAPE -> close the form
-            if (event.keyCode === Util.keyCode.ESCAPE) {
+            if (event.keyCode === util.keyCode.ESCAPE) {
                 event.preventDefault();
                 this.doFormCancel();
             }

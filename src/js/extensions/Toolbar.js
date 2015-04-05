@@ -1,4 +1,4 @@
-define(["./Base"], function(Extension){
+define(["./Base","../util","../selection"], function(Extension, Util, Selection){
 
     return Extension.extend({
 
@@ -8,7 +8,7 @@ define(["./Base"], function(Extension){
         diffTop: -10,
         activeButtonClass: 'medium-editor-button-active',
         firstButtonClass: 'medium-editor-button-first',
-        lastButtonClass: 'medium-editor-button-last'
+        lastButtonClass: 'medium-editor-button-last',
 
         init: function(){
             this.initThrottledMethods();
