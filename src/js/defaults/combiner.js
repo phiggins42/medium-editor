@@ -50,7 +50,7 @@ define([
                 }
                 this.commands.push(options.extensions[i]);
             }
-            delete options.extensions;
+            // delete options.extensions;
         }
 
         // go through the args and see if they passed any that are

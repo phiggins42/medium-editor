@@ -68,7 +68,7 @@ module.exports = function (grunt) {
 
     gruntConfig.jasmine = {
         suite: {
-            src: [],
+            src: ["dist/js/medium-editor.js"],
             options: {
                 specs: ['spec/*.spec.js'],
                 helpers: 'spec/helpers/*.js',

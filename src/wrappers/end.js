@@ -1,2 +1,4 @@
-    return MediumEditor;
-}()));
+
+    root.MediumEditor = require("editor");
+
+})(this);

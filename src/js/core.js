@@ -2,6 +2,8 @@ define(["./util"], function(util){
 
     "use strict";
 
+    var x = 1;
+
     return {
 
         createElementsArray: function(selector){
@@ -21,6 +23,11 @@ define(["./util"], function(util){
 
             // Convert NodeList (or other array like object) into an array
             return Array.prototype.slice.apply(selector);
+        },
+
+
+        uniqueId: function(){
+            return x++;
         }
 
     };

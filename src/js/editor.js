@@ -25,7 +25,6 @@ define([
     "use strict";
 
     function Editor(/* elements, args */){
-        // defer ctor to an init function
         this.init.apply(this, arguments);
     }
 
