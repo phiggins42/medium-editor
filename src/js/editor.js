@@ -11,6 +11,7 @@ define([
     "./selection",
     "./defaults/combiner",
     "./core",
+    "./statics", // deprecated
     "./extensions/Base"
 ], function(
     util,
@@ -19,6 +20,7 @@ define([
     Selection,
     defaults,
     core,
+    statics,
     Extension
 ){
 
@@ -44,6 +46,9 @@ define([
 
     Editor.extend = extend;
     Editor.Extension = Extension;
+
+    // deprecated. fancy? getter deprecation warning?
+    Editor.statics = statics;
 
     Editor.prototype = {
 
