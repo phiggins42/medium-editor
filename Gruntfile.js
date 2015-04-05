@@ -276,6 +276,18 @@ module.exports = function (grunt) {
         }
     };
 
+    gruntConfig.requirejs = {
+        compile: {
+            options: {
+                baseUrl: "src/js",
+                optimize: "none",
+                // mainConfigFile: "path/to/config.js",
+                name: "editor", // assumes a production build using almond
+                out: "dist/medium-editor.js"
+            }
+        }
+    }
+
     grunt.initConfig(gruntConfig);
 
     require('time-grunt')(grunt);
