@@ -6,7 +6,7 @@ define([], function(){
             a = a || {};
             for(var i = arguments.length - 1; i > 0; i--){
                 for(var key in arguments[i]){
-                    a[key] = arguments[i][key]
+                    a[key] = arguments[i][key];
                 }
             }
             return a;
@@ -32,7 +32,7 @@ define([], function(){
             return this.extend(dest, source);
         },
 
-        derives: function derives(base, derived) {
+        derives: function derives(/* base, derived */) {
             this.deprecated("derives", "MediumEditor.extend", "6.0");
             // return MediumEditor.extend.call(base, derived);
         },
@@ -95,8 +95,9 @@ define([], function(){
                 result,
                 timeout = null,
                 previous = 0,
+                t = this,
                 later = function () {
-                    previous = Util.now();
+                    previous = t.now();
                     timeout = null;
                     result = func.apply(context, args);
                     if (!timeout) {
@@ -109,7 +110,7 @@ define([], function(){
             }
 
             return function () {
-                var now = Util.now(),
+                var now = t.now(),
                     remaining = wait - (now - previous);
 
                 context = this;
@@ -355,7 +356,7 @@ define([], function(){
             }
         },
 
-        warn: window.console !== undefined ? console.warn.bind(console) : function(message){},
+        warn: window.console !== undefined ? window.console.warn.bind(window.console) : function(){},
 
         deprecated: function(oldName, newName, version, callback){
             var m = "deprecated: " + oldName + ". Use '" + newName + "' instead.";
