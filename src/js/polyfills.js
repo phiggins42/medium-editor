@@ -1,4 +1,6 @@
-/*
+define([], function(){
+
+   /*
  * classList.js: Cross-browser full element.classList implementation.
  * 2014-12-13
  *
@@ -391,3 +393,5 @@ if (!("classList" in document.createElement("_"))) {
   };
   view.Blob.prototype = getPrototypeOf(new view.Blob());
 }(typeof self !== "undefined" && self || typeof window !== "undefined" && window || this.content || this));
+
+});
