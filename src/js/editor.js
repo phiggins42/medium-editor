@@ -1,3 +1,9 @@
+/*!
+
+    MediumEditor version: 4.1.1
+    [license info?]
+*/
+
 define([
     "./util",
     "./polyfills",
@@ -15,7 +21,6 @@ define([
     core,
     Extension
 ){
-    /*! MediumEditor version: 4.1.1 */
 
     "use strict";
 

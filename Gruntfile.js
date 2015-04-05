@@ -68,7 +68,7 @@ module.exports = function (grunt) {
 
     gruntConfig.jasmine = {
         suite: {
-            src: [srcFiles],
+            src: [],
             options: {
                 specs: ['spec/*.spec.js'],
                 helpers: 'spec/helpers/*.js',
@@ -223,6 +223,7 @@ module.exports = function (grunt) {
         }
     };
 
+    /*
     gruntConfig.plato = {
         feed: {
             files: {
@@ -230,6 +231,7 @@ module.exports = function (grunt) {
             }
         }
     };
+    */
 
     gruntConfig['saucelabs-jasmine'] = {
         all: {
