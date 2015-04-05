@@ -2,7 +2,7 @@ define(["./util"], function(util){
 
     "use strict";
 
-    var x = 1;
+    var uniqueId = 1;
 
     return {
 
@@ -30,7 +30,10 @@ define(["./util"], function(util){
         },
 
         uniqueId: function(){
-            return x++;
+            while (this.options.elementsContainer.querySelector('#medium-editor-toolbar-' + uniqueId)) {
+                uniqueId = uniqueId + 1;
+            }
+            return uniqueId;
         }
 
     };
