@@ -25,6 +25,9 @@ define(["./util"], function(util){
             return Array.prototype.slice.apply(selector);
         },
 
+        createContentEditable: function(index){
+            // todo: forward port @davi textarea fix
+        },
 
         uniqueId: function(){
             return x++;
