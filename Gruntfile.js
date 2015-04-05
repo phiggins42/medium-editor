@@ -12,19 +12,6 @@ module.exports = function (grunt) {
             pkg: grunt.file.readJSON('package.json'),
             globalConfig: globalConfig
         },
-        srcFiles = [
-            /*'src/js/util.js',
-            'src/js/selection.js',
-            'src/js/events.js',
-            'src/js/button.js',
-            'src/js/paste.js',
-            'src/js/extension-anchor.js',
-            'src/js/extension-anchor-preview.js',
-            'src/js/toolbar.js',
-            'src/js/placeholders.js',
-            'src/js/core.js',
-            'src/js/version.js'*/
-        ],
         browsers = [ {
             browserName: "internet explorer",
             version: "9",
@@ -125,7 +112,7 @@ module.exports = function (grunt) {
             report: 'gzip'
         },
         build: {
-            src: 'dist/js/medium-editor.js',
+            src: 'dist/js/<$= pkg.name %>.js',
             dest: 'dist/js/<%= pkg.name %>.min.js'
         }
     };
@@ -226,10 +213,11 @@ module.exports = function (grunt) {
             stripBanners: true
         },
         dist: {
-            src: ['src/js/polyfills.js']
-                .concat(['src/wrappers/start.js'])
-                .concat(srcFiles)
-                .concat(['src/wrappers/end.js']),
+            src: [
+                'src/wrappers/start.js',
+                'dist/js/amd-medium-editor.js',
+                'src/wrappers/end.js'
+            ],
             dest: 'dist/js/<%= pkg.name %>.js',
             nonull: true
         }
@@ -283,10 +271,10 @@ module.exports = function (grunt) {
                 optimize: "none",
                 // mainConfigFile: "path/to/config.js",
                 name: "editor", // assumes a production build using almond
-                out: "dist/medium-editor.js"
+                out: "dist/js/amd-medium-editor.js"
             }
         }
-    }
+    };
 
     grunt.initConfig(gruntConfig);
 
@@ -304,9 +292,9 @@ module.exports = function (grunt) {
         grunt.registerTask('travis', ['connect', 'jshint', 'jasmine:suite', 'csslint', 'saucelabs-jasmine', 'coveralls']);
     }
 
-    grunt.registerTask('test', ['jshint', 'concat', 'jasmine:suite', 'csslint']);
+    grunt.registerTask('test', ['jshint', 'requirejs', 'concat', 'jasmine:suite', 'csslint']);
     grunt.registerTask('sauce', ['connect', 'saucelabs-jasmine']);
-    grunt.registerTask('js', ['jshint', 'concat', 'jasmine:suite', 'uglify']);
+    grunt.registerTask('js', ['jshint', 'requirejs', 'concat', 'jasmine:suite', 'uglify']);
     grunt.registerTask('css', ['sass', 'autoprefixer', 'cssmin', 'csslint']);
     grunt.registerTask('default', ['js', 'css']);
 

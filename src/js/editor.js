@@ -15,6 +15,7 @@ define([
     core,
     Extension
 ){
+    /*! MediumEditor version: 4.1.1 */
 
     "use strict";
 
