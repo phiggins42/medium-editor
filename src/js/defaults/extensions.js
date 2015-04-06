@@ -2,9 +2,9 @@ define([
     "../extensions/Anchor",
     "../extensions/AnchorPreview",
     "../extensions/Events",
+    "../extensions/Paste",
     "../extensions/Placeholders",
-    "../extensions/Toolbar",
-    "../extensions/Paste"
+    "../extensions/Toolbar"
 ], function(
     Anchor,
     AnchorPreview,
