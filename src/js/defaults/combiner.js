@@ -53,7 +53,7 @@ define([
         //  * function - a ctor to use in place of the default, or as a custom
         //          extension.
 
-        var options = util.extend({}, optionDefaults, args);
+        var options = util.extend({}, args, optionDefaults);
         var ctors = util.extend({}, extensionDefaults);
         var extensions = options.extensions;
 
