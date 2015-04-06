@@ -19,7 +19,7 @@ define(["./Base","../util","../selection"], function(Extension, Util, Selection)
         // Toolbar creation/deletion
 
         createToolbar: function () {
-            var toolbar = this.base.options.ownerDocument.createElement('div');
+            var toolbar = this.options.ownerDocument.createElement('div');
 
             toolbar.id = 'medium-editor-toolbar-' + this.base.id;
             toolbar.className = 'medium-editor-toolbar';
@@ -512,11 +512,11 @@ define(["./Base","../util","../selection"], function(Extension, Util, Selection)
                 toolbarElement.style.top = containerTop - toolbarHeight + "px";
             }
 
-            if (this.options.toolbarAlign === 'left') {
+            if (this.align === 'left') {
                 targetLeft = containerRect.left;
-            } else if (this.options.toolbarAlign === 'center') {
+            } else if (this.align === 'center') {
                 targetLeft = containerCenter - halfOffsetWidth;
-            } else if (this.options.toolbarAlign === 'right') {
+            } else if (this.align === 'right') {
                 targetLeft = containerRect.right - toolbarWidth;
             }
 
@@ -542,16 +542,16 @@ define(["./Base","../util","../selection"], function(Extension, Util, Selection)
                 toolbarWidth = toolbarElement.offsetWidth,
                 halfOffsetWidth = toolbarWidth / 2,
                 buttonHeight = 50,
-                defaultLeft = this.options.diffLeft - halfOffsetWidth;
+                defaultLeft = this.diffLeft - halfOffsetWidth;
 
             if (boundary.top < buttonHeight) {
                 toolbarElement.classList.add('medium-toolbar-arrow-over');
                 toolbarElement.classList.remove('medium-toolbar-arrow-under');
-                toolbarElement.style.top = buttonHeight + boundary.bottom - this.options.diffTop + this.options.contentWindow.pageYOffset - toolbarHeight + 'px';
+                toolbarElement.style.top = buttonHeight + boundary.bottom - this.diffTop + this.options.contentWindow.pageYOffset - toolbarHeight + 'px';
             } else {
                 toolbarElement.classList.add('medium-toolbar-arrow-under');
                 toolbarElement.classList.remove('medium-toolbar-arrow-over');
-                toolbarElement.style.top = boundary.top + this.options.diffTop + this.options.contentWindow.pageYOffset - toolbarHeight + 'px';
+                toolbarElement.style.top = boundary.top + this.diffTop + this.options.contentWindow.pageYOffset - toolbarHeight + 'px';
             }
             if (middleBoundary < halfOffsetWidth) {
                 toolbarElement.style.left = defaultLeft + halfOffsetWidth + 'px';

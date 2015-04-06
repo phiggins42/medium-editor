@@ -74,16 +74,16 @@ define(["./Base"], function(Extension){
         },
 
         isActive: function () {
-            return this.button.classList.contains(this.activeButtonClass);
+            return this.button.classList.contains(this.base.toolbar.activeButtonClass);
         },
 
         setInactive: function () {
-            this.button.classList.remove(this.activeButtonClass);
+            this.button.classList.remove(this.base.toolbar.activeButtonClass);
             delete this.knownState;
         },
 
         setActive: function () {
-            this.button.classList.add(this.activeButtonClass);
+            this.button.classList.add(this.base.toolbar.activeButtonClass);
             delete this.knownState;
         },
 

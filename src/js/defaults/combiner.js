@@ -81,11 +81,15 @@ define([
                 ;
 
                 util.setObject(newPath, newVal, options);
-
                 util.deprecated("options." + arg, "options." + newPath, "5.0", function(){
                     //var expected = util.getObject(newPath, false, options);
                     //util.warn("you passed:", passedVal, " previous default:", deprecatedDefaults[arg][0], "expected output:", expected, options);
                 });
+
+                if(arg === "disableToolbar"){
+                    // ugh. if toolbar disabled, anchor-preview should be disabled too
+                    options["anchor-preview"] = false;
+                }
             }
         }
 
@@ -135,6 +139,11 @@ define([
             }
         }
 
+        // todo: this causes a circular/stack overflow because toolbar ends up a `commands`
+        // so it triggering checkState ends up thinking it needs checked endlessly. for now
+        // just don't expose toolbar on the commands list. if someone passed an override
+        // that is already in place at `this.toolbar`, this is just removing the commands
+        // reference
         delete options.extensions.toolbar;
 
         return options;
