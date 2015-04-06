@@ -2,10 +2,12 @@ define(["./Base","../selection","../util"], function(Extension, Selection, util)
 
     return Extension.extend({
 
-        constructor: function(){
-            this.events = [];
-            this.customEvents = {};
-            this.listeners = {};
+        constructor: function(opts){
+            util.extend(this, opts, {
+                events: [],
+                customEvents: {},
+                listeners: {}
+            });
         },
 
         // Helpers for event handling

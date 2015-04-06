@@ -84,15 +84,14 @@ define([
 
             this.commands = [];
             for(var i in this.options.extensions){
+
                 var ex = this.options.extensions[i];
+
                 if (ex.init && typeof ex.init === "function") {
                     ex.init();
                 }
 
-                if (!ex.hasOwnProperty("options")){
-                    ex.options = this.options;
-                }
-
+                this.commands.push(ex);
             }
 
             //core.initElements.call(this);
