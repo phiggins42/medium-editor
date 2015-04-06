@@ -94,7 +94,7 @@ define([
             if(this.toolbar && this.toolbar.init){ this.toolbar.init(); }
 
             core.initElements.call(this);
-            //core.attachHandlers.call(this);
+            core.attachHandlers.call(this);
 
             // you can now use `this.base.options` in any of your extensions
             // and know that every key/value is a dot-accessible object, like
