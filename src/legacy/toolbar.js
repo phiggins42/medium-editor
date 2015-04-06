@@ -63,7 +63,7 @@ var Toolbar;
                     }
                     ul.appendChild(li);
                 }
-            }.bind(this));
+            }, this);
 
             buttons = ul.querySelectorAll('button');
             if (buttons.length > 0) {
@@ -374,10 +374,10 @@ var Toolbar;
 
         setToolbarButtonStates: function () {
             this.base.commands.forEach(function (extension) {
-                if (typeof extension.isActive === 'function') {
+                if (typeof extension.isActive === 'function' && extension.name !== this.name) {
                     extension.setInactive();
                 }
-            }.bind(this));
+            }, this);
             this.checkActiveButtons();
         },
 

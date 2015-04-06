@@ -80,10 +80,12 @@ define([
                     newVal = deprecatedArg.length === 3 ? deprecatedArg[2] : passedVal
                 ;
 
-                util.deprecated("options." + arg, "options." + newPath, "5.0", function(){
-                    util.warn("you passed:", passedVal, " previous default:", deprecatedDefaults[arg][0]);
-                });
                 util.setObject(newPath, newVal, options);
+
+                util.deprecated("options." + arg, "options." + newPath, "5.0", function(){
+                    //var expected = util.getObject(newPath, false, options);
+                    //util.warn("you passed:", passedVal, " previous default:", deprecatedDefaults[arg][0], "expected output:", expected, options);
+                });
             }
         }
 
@@ -132,6 +134,8 @@ define([
 
             }
         }
+
+        delete options.extensions.toolbar;
 
         return options;
     };

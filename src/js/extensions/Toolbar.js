@@ -3,7 +3,6 @@ define(["./Base","../util","../selection"], function(Extension, Util, Selection)
     return Extension.extend({
 
         align: 'center',
-        delay: 0,
         diffLeft: 0,
         diffTop: -10,
         activeButtonClass: 'medium-editor-button-active',
@@ -72,8 +71,8 @@ define(["./Base","../util","../selection"], function(Extension, Util, Selection)
 
             buttons = ul.querySelectorAll('button');
             if (buttons.length > 0) {
-                buttons[0].classList.add(this.options.firstButtonClass);
-                buttons[buttons.length - 1].classList.add(this.options.lastButtonClass);
+                buttons[0].classList.add(this.firstButtonClass);
+                buttons[buttons.length - 1].classList.add(this.lastButtonClass);
             }
 
             return ul;
@@ -379,10 +378,11 @@ define(["./Base","../util","../selection"], function(Extension, Util, Selection)
 
         setToolbarButtonStates: function () {
             this.base.commands.forEach(function (extension) {
-                if (typeof extension.isActive === 'function') {
+                if (typeof extension.isActive === 'function' && extension !== this) {
+                    console.warn("setInactive", extension.name);
                     extension.setInactive();
                 }
-            }.bind(this));
+            }, this);
             this.checkActiveButtons();
         },
 

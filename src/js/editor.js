@@ -91,7 +91,9 @@ define([
                 this.commands.push(ex);
             }
 
-            //core.initElements.call(this);
+            if(this.toolbar && this.toolbar.init){ this.toolbar.init(); }
+
+            core.initElements.call(this);
             //core.attachHandlers.call(this);
 
             // you can now use `this.base.options` in any of your extensions

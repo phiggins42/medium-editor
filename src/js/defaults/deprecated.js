@@ -19,7 +19,6 @@ define([], function(){
         anchorPreviewHideDelay: [500, "anchor-preview.hideDelay"],
         checkLinkFormat: [false, "anchor.checkLinkFormat"],
         cleanPastedHTML: [false, "paste.cleanPastedHTML"],
-        delay: [0, "toolbar.delay"],
         diffLeft: [0, "toolbar.diffLeft"],
         diffTop: [-10, "toolbar.diffTop"],
         disableToolbar: [false, "toolbar", false],

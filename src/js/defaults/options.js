@@ -1,6 +1,7 @@
 define([], function(){
 
-    // core default options and extension activity
+    // core default options and extension activity. this is what remains of the deprecated
+    // list and "move everything to extensions" concept.
 
     return {
 
@@ -19,6 +20,9 @@ define([], function(){
         // might consider implications of this, and provide a way away from
         // fa-bulk defaults?
         buttonLabels: false,
+
+        // is a base delay, not toolbar delay specifically
+        delay: 0,
 
         disableReturn: false,
         disableDoubleReturn: false,

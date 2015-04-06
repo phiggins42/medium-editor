@@ -186,7 +186,7 @@ define(["./Base"], function(Extension){
                 return true;
             }
             var durr = (new Date()).getTime() - this.lastOver;
-            if (durr > this.base.options.anchorPreviewHideDelay) {
+            if (durr > this.hideDelay) {
                 // hide the preview 1/2 second after mouse leaves the link
                 this.detachPreviewHandlers();
             }
