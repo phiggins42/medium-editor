@@ -11,7 +11,7 @@ define([], function(){
     //
     // new location is a dot.notation.accessed thing relative
     // to what kind of property would be expected to be passed
-    // in instead.
+    // in instead. presence of a newvalue overrides passed value
 
     return {
         anchorInputPlaceholder: ['Paste or type a link', 'anchor.anchorInputPlaceholder'],
@@ -33,10 +33,10 @@ define([], function(){
         anchorButton: [false, "anchor.anchorButton"],
         anchorButtonClass: ['btn', "anchor.anchorButtonClass"],
         activeButtonClass: ['medium-editor-button-active', 'toolbar.activeButtonClass'],
-        firstButtonClass: ['medium-editor-button-first','toolbar.lastButtonClass'],
-        lastButtonClass: ['medium-editor-button-last', 'toolbar.firstButtonClass'],
-        firstHeader: ['h3', "headers.0", 'h3'],
-        secondHeader: ['h4', "headers.1", 'h4'],
+        firstButtonClass: ['medium-editor-button-first','toolbar.firstButtonClass'],
+        lastButtonClass: ['medium-editor-button-last', 'toolbar.lastButtonClass'],
+        firstHeader: ['h3', "headers.0"],
+        secondHeader: ['h4', "headers.1"],
     };
 
 });

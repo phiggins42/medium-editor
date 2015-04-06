@@ -71,13 +71,18 @@ define([
         // go through the args and see if they passed any that are
         // nondefault + deprecated
         for(var arg in args){
-            if(arg in deprecatedDefaults && deprecatedDefaults[arg][0] !== args[arg]){
 
-                var newVal = args[arg],
-                    newPath = deprecatedDefaults[arg][1]
+            var deprecatedArg = deprecatedDefaults[arg];
+            if(deprecatedArg && deprecatedArg[0] !== args[arg]){
+
+                var passedVal = args[arg],
+                    newPath = deprecatedArg[1],
+                    newVal = deprecatedArg.length === 3 ? deprecatedArg[2] : passedVal
                 ;
 
-                util.deprecated("options." + arg, "options." + newPath, "5.0");
+                util.deprecated("options." + arg, "options." + newPath, "5.0", function(){
+                    util.warn("you passed:", passedVal, " previous default:", deprecatedDefaults[arg][0]);
+                });
                 util.setObject(newPath, newVal, options);
             }
         }
