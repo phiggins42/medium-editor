@@ -1,9 +1,11 @@
 /*global MediumEditor, describe, it, expect, spyOn,
-     afterEach, beforeEach, tearDown, fireEvent, Util,
+     afterEach, beforeEach, tearDown, fireEvent,
      isIE9*/
 
 describe('Drag and Drop TestCase', function () {
     'use strict';
+
+    var Util = MediumEditor.util;
 
     beforeEach(function () {
         this.el = document.createElement('div');

@@ -1,4 +1,4 @@
-/*global MediumEditor, Util, describe, it, expect, spyOn */
+/*global MediumEditor, describe, it, expect, spyOn */
 
 describe('Util', function () {
     'use strict';
@@ -7,7 +7,8 @@ describe('Util', function () {
 
         it("is exposed on the MediumEditor ctor", function () {
             expect(MediumEditor.util).toBeTruthy();
-            expect(MediumEditor.util).toEqual(Util);
+            // dosn't apply now because never exposed as a global
+            // expect(MediumEditor.util).toEqual(Util);
         });
 
     });
@@ -27,7 +28,7 @@ describe('Util', function () {
             };
             spyOn(testObj, 'newMethod').and.callThrough();
             spyOn(window.console, 'warn').and.callThrough();
-            Util.deprecatedMethod.call(testObj, 'test', 'newMethod', ['arg1', true]);
+            MediumEditor.util.deprecatedMethod.call(testObj, 'test', 'newMethod', ['arg1', true]);
             expect(testObj.newMethod).toHaveBeenCalledWith('arg1', true);
             expect(window.console.warn).toHaveBeenCalledWith(
                 'test is deprecated and will be removed, please use newMethod instead'

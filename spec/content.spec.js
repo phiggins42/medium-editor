@@ -1,10 +1,12 @@
 /*global MediumEditor, describe, it, expect, spyOn,
     fireEvent, afterEach, beforeEach, selectElementContents,
-    tearDown, placeCursorInsideElement, isFirefox, Util,
+    tearDown, placeCursorInsideElement, isFirefox,
     selectElementContentsAndFire */
 
 describe('Content TestCase', function () {
     'use strict';
+
+    var Util = MediumEditor.util;
 
     beforeEach(function () {
         this.el = document.createElement('div');

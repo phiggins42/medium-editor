@@ -46,6 +46,8 @@ define([
 
     Editor.extend = extend;
     Editor.Extension = Extension;
+    Editor.util = util;
+    Editor.selection = Selection;
 
     // deprecated. fancy? getter deprecation warning?
     Editor.statics = statics;

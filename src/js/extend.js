@@ -1,7 +1,27 @@
 define(["./util"], function(util){
 
     return function(protoProps){
-        // magic extender
+        // magic extender thinger. mostly borrowed from backbone/goog.inherits
+        // place this function on some thing you want extend-able.
+        //
+        // example:
+        //
+        //      function Thing(args){
+        //          this.options = args;
+        //      }
+        //
+        //      Thing.prototype = { foo: "bar" };
+        //      Thing.extend = extenderify;
+        //
+        //      var ThingTwo = Thing.extend({ foo: "baz" });
+        //
+        //      var thingOne = new Thing(); // foo === bar
+        //      var thingTwo = new ThingTwo(); // foo == baz
+        //
+        //      which seems like some simply shallow copy nonsense
+        //      at first, but a lot more is going on there.
+        //
+        //
         var parent = this, child;
 
         // The constructor function for the new subclass is either defined by you
@@ -24,6 +44,8 @@ define(["./util"], function(util){
         child.prototype = new Surrogate();
 
         if (protoProps) { util.extend(child.prototype, protoProps); }
+
+        // todo: $super?
 
         return child;
     };

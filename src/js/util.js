@@ -1,5 +1,9 @@
 define([], function(){
 
+    /* global console */
+
+    var warn = typeof window.console !== undefined ? console.warn.bind(console) : function(){};
+
     return {
 
         extend: function extend(a /* , b, c ... */){
@@ -345,12 +349,12 @@ define([], function(){
 
         deprecatedMethod: function (oldName, newName, args) {
             // Thanks IE9, you're the best
-
-            this.warn(oldName +
-                ' is deprecated and will be removed, please use ' +
-                newName +
-                ' instead');
-
+            if (window.console !== undefined) {
+                console.warn(oldName +
+                    ' is deprecated and will be removed, please use ' +
+                    newName +
+                    ' instead');
+            }
             if (typeof this[newName] === 'function') {
                 this[newName].apply(this, args);
             }
@@ -363,6 +367,8 @@ define([], function(){
             if(version){
                 m += " Will be removed in " + version;
             }
+
+            warn(m);
             if(callback && typeof callback === "function"){
                 callback();
             }
