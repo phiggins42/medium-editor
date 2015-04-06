@@ -14,28 +14,37 @@ define([], function(){
     // in instead. presence of a newvalue overrides passed value
 
     return {
-        anchorInputPlaceholder: ['Paste or type a link', 'anchor.anchorInputPlaceholder'],
-        anchorInputCheckboxLabel: ['Open in new window', 'anchor.anchorInputCheckboxLabel'],
-        anchorPreviewHideDelay: [500, "anchor-preview.hideDelay"],
-        checkLinkFormat: [false, "anchor.checkLinkFormat"],
-        cleanPastedHTML: [false, "paste.cleanPastedHTML"],
-        diffLeft: [0, "toolbar.diffLeft"],
-        diffTop: [-10, "toolbar.diffTop"],
-        disableToolbar: [false, "toolbar", false],
-        disableAnchorPreview: [false, "anchor-preview", false],
-        disablePlaceholders: [false, "placeholders", false],
-        toolbarAlign: ['center', "toolbar.align"],
-        forcePlainText: [true, "paste.forcePlainText"],
-        placeholder: ['Type your text', "placeholders.placeholder"],
-        targetBlank: [false, "anchor.targetBlank"],
+
+        anchorInputPlaceholder: ['Paste or type a link', 'anchor.inputPlaceholder'],
+        anchorInputCheckboxLabel: ['Open in new window', 'anchor.inputCheckboxLabel'],
         anchorTarget: [false, "anchor.anchorTarget"],
         anchorButton: [false, "anchor.anchorButton"],
         anchorButtonClass: ['btn', "anchor.anchorButtonClass"],
+        checkLinkFormat: [false, "anchor.validateLink"],
+        targetBlank: [false, "anchor.targetBlank"],
+
+        cleanPastedHTML: [false, "paste.cleanPastedHTML"],
+        forcePlainText: [true, "paste.forcePlainText"],
+
+        diffLeft: [0, "toolbar.diffLeft"],
+        diffTop: [-10, "toolbar.diffTop"],
         activeButtonClass: ['medium-editor-button-active', 'toolbar.activeButtonClass'],
         firstButtonClass: ['medium-editor-button-first','toolbar.firstButtonClass'],
         lastButtonClass: ['medium-editor-button-last', 'toolbar.lastButtonClass'],
+
+        disableToolbar: [false, "toolbar", false],
+        toolbarAlign: ['center', "toolbar.align"],
+
+        anchorPreviewHideDelay: [500, "anchor-preview.hideDelay"],
+        disableAnchorPreview: [false, "anchor-preview", false],
+
+        disablePlaceholders: [false, "placeholders", false],
+
+        placeholder: ['Type your text', "placeholders.placeholder"],
+
         firstHeader: ['h3', "headers.0"],
-        secondHeader: ['h4', "headers.1"],
+        secondHeader: ['h4', "headers.1"]
+
     };
 
 });

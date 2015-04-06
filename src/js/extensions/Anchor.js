@@ -13,11 +13,11 @@ define(["./Button","../selection","../util"], function(Button, Selection, util){
         // properties
         inputPlaceholder: 'Paste or type a link',
         inputCheckboxLabel: 'Open in new window',
-        checkLinkFormat: false,
+        validateLink: false,
         targetBlank: false,
         anchorTarget: false,
         anchorButton: false,
-        anchorbuttonClass: 'btn',
+        anchorButtonClass: 'btn',
 
         // labels for the anchor-edit form buttons
         formSaveLabel: '&#10003;',
@@ -52,7 +52,7 @@ define(["./Button","../selection","../util"], function(Button, Selection, util){
         getTemplate: function () {
 
             var template = [
-                '<input type="text" class="medium-editor-toolbar-input" placeholder="', this.base.options.anchorInputPlaceholder, '">'
+                '<input type="text" class="medium-editor-toolbar-input" placeholder="', this.inputPlaceholder, '">'
             ];
 
             template.push(
@@ -68,18 +68,18 @@ define(["./Button","../selection","../util"], function(Button, Selection, util){
             // both of these options are slightly moot with the ability to
             // override the various form buildup/serialize functions.
 
-            if (this.base.options.anchorTarget) {
+            if (this.anchorTarget) {
                 // fixme: ideally, this options.anchorInputCheckboxLabel would be a formLabel too,
                 // figure out how to deprecate? also consider `fa-` icon default implcations.
                 template.push(
                     '<input type="checkbox" class="medium-editor-toolbar-anchor-target">',
                     '<label>',
-                    this.anchorInputCheckboxLabel,
+                    this.inputCheckboxLabel,
                     '</label>'
                 );
             }
 
-            if (this.base.options.anchorButton) {
+            if (this.anchorButton) {
                 // fixme: expose this `Button` text as a formLabel property, too
                 // and provide similar access to a `fa-` icon default.
                 template.push(
@@ -137,8 +137,8 @@ define(["./Button","../selection","../util"], function(Button, Selection, util){
                     url: this.getInput().value
                 };
 
-            if (this.base.options.checkLinkFormat) {
-                opts.url = this.validateLink(opts.url);
+            if (this.validateLinkFormat) {
+                opts.url = this.checkLinkFormat(opts.url);
             }
 
             if (targetCheckbox && targetCheckbox.checked) {
@@ -166,7 +166,7 @@ define(["./Button","../selection","../util"], function(Button, Selection, util){
         },
 
         // ugh, the property is names this, too.
-        validateLink: function (value) {
+        checkLinkFormat: function (value) {
             var re = /^(https?|ftps?|rtmpt?):\/\/|mailto:/;
             return (re.test(value) ? '' : 'http://') + value;
         },

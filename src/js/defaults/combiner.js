@@ -81,10 +81,7 @@ define([
                 ;
 
                 util.setObject(newPath, newVal, options);
-                util.deprecated("options." + arg, "options." + newPath, "5.0", function(){
-                    //var expected = util.getObject(newPath, false, options);
-                    //util.warn("you passed:", passedVal, " previous default:", deprecatedDefaults[arg][0], "expected output:", expected, options);
-                });
+                util.deprecated("options." + arg, "options." + newPath, "5.0");
 
                 if(arg === "disableToolbar"){
                     // ugh. if toolbar disabled, anchor-preview should be disabled too

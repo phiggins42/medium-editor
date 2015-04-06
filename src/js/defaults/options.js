@@ -5,12 +5,12 @@ define([], function(){
 
     return {
 
-        "placeholders": true,
-        "toolbar": true,
-        "anchor": true,
-        "anchor-preview": true,
-        "paste": true,
-        "events": true,
+        "placeholders": {},
+        "toolbar": {},
+        "anchor": {},
+        "anchor-preview": {},
+        "paste": {},
+        "events": {},
 
         allowMultiParagraphSelection: true,
 
