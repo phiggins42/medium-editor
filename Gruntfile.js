@@ -270,7 +270,7 @@ module.exports = function (grunt) {
         compile: {
             options: {
                 baseUrl: "src/js",
-                optimize: "none",
+                // optimize: "none",
                 // mainConfigFile: "path/to/config.js",
                 name: "editor", // assumes a production build using almond
                 out: "dist/js/amd-medium-editor.js"

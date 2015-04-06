@@ -4,6 +4,30 @@ define([], function(){
 
     var warn = typeof window.console !== undefined ? console.warn.bind(console) : function(){};
 
+    function getProp(/*Array*/parts, /*Boolean*/create, /*Object*/context){
+        if(!context){
+            context = window;
+        }
+
+        try{
+            for(var i = 0; i < parts.length; i++){
+                var p = parts[i];
+                if(!(p in context)){
+                    if(create){
+                        context[p] = {};
+                    }else{
+                        return;     // return undefined
+                    }
+                }
+                context = context[p];
+            }
+            return context; // mixed
+        }catch(e){
+            // "p in context" throws an exception when context is a number, boolean, etc. rather than an object,
+            // so in that corner case just return undefined (by having no return statement)
+        }
+    }
+
     return {
 
         extend: function extend(a /* , b, c ... */){
@@ -386,6 +410,19 @@ define([], function(){
                     el.parentNode.removeChild(el);
                 }
             });
+        },
+
+        setObject: function(name, value, context){
+            // summary:
+            //      Set a property from a dot-separated string, such as "A.B.C"
+            var parts = name.split("."), p = parts.pop(), obj = getProp(parts, true, context);
+            return obj && p ? (obj[p] = value) : undefined; // Object
+        },
+
+        getObject: function(name, create, context){
+            // summary:
+            //      Get a property from a dot-separated string, such as "A.B.C"
+            return getProp(name ? name.split(".") : [], create, context); // Object
         }
 
     };

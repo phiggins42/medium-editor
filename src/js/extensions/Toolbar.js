@@ -11,6 +11,9 @@ define(["./Base","../util","../selection"], function(Extension, Util, Selection)
         lastButtonClass: 'medium-editor-button-last',
 
         init: function(){
+            // FIXME: we don't really want to do this. stuff is
+            // a prototype property or a base.options in this new world?
+            this.options = this.base.options;
             this.initThrottledMethods();
         },
 
@@ -22,7 +25,8 @@ define(["./Base","../util","../selection"], function(Extension, Util, Selection)
             toolbar.id = 'medium-editor-toolbar-' + this.base.id;
             toolbar.className = 'medium-editor-toolbar';
 
-            if (this.options.staticToolbar) {
+            // FIXME: move to a toolbar prop, deprecate.
+            if (this.base.options.staticToolbar) {
                 toolbar.className += " static-toolbar";
             } else {
                 toolbar.className += " stalker-toolbar";

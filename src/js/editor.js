@@ -81,16 +81,13 @@ define([
             }
 
             this.isActive = true;
-
             this.commands = [];
+
             for(var i in this.options.extensions){
-
                 var ex = this.options.extensions[i];
-
                 if (ex.init && typeof ex.init === "function") {
                     ex.init();
                 }
-
                 this.commands.push(ex);
             }
 
@@ -439,11 +436,11 @@ define([
         },
 
         cleanPaste: function (text) {
-            this.pasteHandler.cleanPaste(text);
+            this.paste.cleanPaste(text);
         },
 
         pasteHTML: function (html, options) {
-            this.pasteHandler.pasteHTML(html, options);
+            this.paste.pasteHTML(html, options);
         }
 
     };

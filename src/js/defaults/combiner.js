@@ -71,10 +71,14 @@ define([
         // go through the args and see if they passed any that are
         // nondefault + deprecated
         for(var arg in args){
-            if(arg in deprecatedDefaults){
-                util.deprecated(arg, deprecatedDefaults[arg][1], "5.0.0", function(){
-                    // attempt to set this to the new known location?
-                });
+            if(arg in deprecatedDefaults && deprecatedDefaults[arg][0] !== args[arg]){
+
+                var newVal = args[arg],
+                    newPath = deprecatedDefaults[arg][1]
+                ;
+
+                util.deprecated("options." + arg, "options." + newPath, "5.0");
+                util.setObject(newPath, newVal, options);
             }
         }
 
@@ -115,7 +119,11 @@ define([
 
                 // this is a bit of magic. toolbars and events and things
                 // are instantiated and used locally.
-                this[opt] = extensions[opt];
+                if( opt in this ){
+                    util.warn("cowardly not overwriting core property:", opt);
+                }else {
+                    this[opt] = extensions[opt];
+                }
 
             }
         }

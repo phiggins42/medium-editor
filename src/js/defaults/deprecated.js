@@ -6,6 +6,13 @@ define([], function(){
     // value to the deprecated property, and setting that
     // property as an override for the extension ctor
 
+    // each deprecated property is an array of three things.
+    // original value, new location, new value
+    //
+    // new location is a dot.notation.accessed thing relative
+    // to what kind of property would be expected to be passed
+    // in instead.
+
     return {
         anchorInputPlaceholder: ['Paste or type a link', 'anchor.anchorInputPlaceholder'],
         anchorInputCheckboxLabel: ['Open in new window', 'anchor.anchorInputCheckboxLabel'],
@@ -28,8 +35,8 @@ define([], function(){
         activeButtonClass: ['medium-editor-button-active', 'toolbar.activeButtonClass'],
         firstButtonClass: ['medium-editor-button-first','toolbar.lastButtonClass'],
         lastButtonClass: ['medium-editor-button-last', 'toolbar.firstButtonClass'],
-        firstHeader: ['h3', "headers", 0, 'h3'],
-        secondHeader: ['h4', "headers", 1, 'h4'],
+        firstHeader: ['h3', "headers.0", 'h3'],
+        secondHeader: ['h4', "headers.1", 'h4'],
     };
 
 });
