@@ -1,10 +1,12 @@
 /*global MediumEditor, describe, it, expect, spyOn,
     afterEach, beforeEach, selectElementContents,
     fireEvent, tearDown, jasmine, selectElementContentsAndFire,
-    placeCursorInsideElement, Toolbar */
+    placeCursorInsideElement */
 
 describe('Toolbar TestCase', function () {
     'use strict';
+
+    var Toolbar = MediumEditor.statics.Toolbar;
 
     beforeEach(function () {
         this.el = document.createElement('div');

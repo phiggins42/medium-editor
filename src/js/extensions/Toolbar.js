@@ -378,8 +378,7 @@ define(["./Base","../util","../selection"], function(Extension, Util, Selection)
 
         setToolbarButtonStates: function () {
             this.base.commands.forEach(function (extension) {
-                if (typeof extension.isActive === 'function' && extension !== this) {
-                    console.warn("setInactive", extension.name);
+                if (typeof extension.isActive === 'function') {
                     extension.setInactive();
                 }
             }, this);

@@ -64,8 +64,8 @@ define(["./Base","../util","../selection"], function(Extension, util, Selection)
                 dataFormatHTML = 'text/html',
                 dataFormatPlain = 'text/plain';
 
-            if (this.options.contentWindow.clipboardData && event.clipboardData === undefined) {
-                event.clipboardData = this.options.contentWindow.clipboardData;
+            if (this.base.options.contentWindow.clipboardData && event.clipboardData === undefined) {
+                event.clipboardData = this.base.options.contentWindow.clipboardData;
                 // If window.clipboardData exists, but event.clipboardData doesn't exist,
                 // we're probably in IE. IE only has two possibilities for clipboard
                 // data format: 'Text' and 'URL'.
@@ -91,19 +91,19 @@ define(["./Base","../util","../selection"], function(Extension, util, Selection)
                             html += '<p>' + util.htmlEntities(paragraphs[p]) + '</p>';
                         }
                     }
-                    util.insertHTMLCommand(this.options.ownerDocument, html);
+                    util.insertHTMLCommand(this.base.options.ownerDocument, html);
                 } else {
                     html = util.htmlEntities(event.clipboardData.getData(dataFormatPlain));
-                    util.insertHTMLCommand(this.options.ownerDocument, html);
+                    util.insertHTMLCommand(this.base.options.ownerDocument, html);
                 }
             }
         },
 
         cleanPaste: function (text) {
             var i, elList, workEl,
-                el = Selection.getSelectionElement(this.options.contentWindow),
+                el = Selection.getSelectionElement(this.base.options.contentWindow),
                 multiline = /<p|<br|<div/.test(text),
-                replacements = createReplacements();
+                replacements = createReplacements().concat(this.customReplacements || []);
 
             for (i = 0; i < replacements.length; i += 1) {
                 text = text.replace(replacements[i][0], replacements[i][1]);
@@ -113,10 +113,10 @@ define(["./Base","../util","../selection"], function(Extension, util, Selection)
                 // double br's aren't converted to p tags, but we want paragraphs.
                 elList = text.split('<br><br>');
 
-                this.pasteHTML('<p>' + elList.join('</p><p>') + '</p>');
+                this.pasteHTML('<p>' + elList.join('</p><p>') + '</p>', this.base.options);
 
                 try {
-                    this.options.ownerDocument.execCommand('insertText', false, "\n");
+                    this.base.options.ownerDocument.execCommand('insertText', false, "\n");
                 } catch (ignore) { }
 
                 // block element cleanup
@@ -155,9 +155,9 @@ define(["./Base","../util","../selection"], function(Extension, util, Selection)
                 cleanTags: ['meta']
             });
 
-            var elList, workEl, i, fragmentBody, pasteBlock = this.options.ownerDocument.createDocumentFragment();
+            var elList, workEl, i, fragmentBody, pasteBlock = this.base.options.ownerDocument.createDocumentFragment();
 
-            pasteBlock.appendChild(this.options.ownerDocument.createElement('body'));
+            pasteBlock.appendChild(this.base.options.ownerDocument.createElement('body'));
 
             fragmentBody = pasteBlock.querySelector('body');
             fragmentBody.innerHTML = html;
@@ -172,7 +172,7 @@ define(["./Base","../util","../selection"], function(Extension, util, Selection)
                 util.cleanupTags(workEl, options.cleanTags);
             }
 
-            util.insertHTMLCommand(this.options.ownerDocument, fragmentBody.innerHTML.replace(/&nbsp;/g, ' '));
+            util.insertHTMLCommand(this.base.options.ownerDocument, fragmentBody.innerHTML.replace(/&nbsp;/g, ' '));
         },
 
         isCommonBlock: function (el) {
@@ -221,7 +221,7 @@ define(["./Base","../util","../selection"], function(Extension, util, Selection)
 
             for (i = 0; i < spans.length; i += 1) {
                 el = spans[i];
-                new_el = this.options.ownerDocument.createElement(el.classList.contains('bold') ? 'b' : 'i');
+                new_el = this.base.options.ownerDocument.createElement(el.classList.contains('bold') ? 'b' : 'i');
 
                 if (el.classList.contains('bold') && el.classList.contains('italic')) {
                     // add an i tag as well if this has both italics and bold
@@ -245,7 +245,7 @@ define(["./Base","../util","../selection"], function(Extension, util, Selection)
                 if (/^\s*$/.test()) {
                     el.parentNode.removeChild(el);
                 } else {
-                    el.parentNode.replaceChild(this.options.ownerDocument.createTextNode(el.textContent), el);
+                    el.parentNode.replaceChild(this.base.options.ownerDocument.createTextNode(el.textContent), el);
                 }
             }
         }
