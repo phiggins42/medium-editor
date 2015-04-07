@@ -1,7 +1,7 @@
 define(["./Base"], function(Extension){
     return Extension.extend({
 
-        placeHolder:"Type your text",
+        placeholder:"Type your text",
 
         init: function(){
             this.initPlaceholders();

@@ -66,6 +66,9 @@ define([
             this.elements = core.createElementsArray.call(this, elements);
 
             if(!this.elements.length){
+                // this is done to appease the tests
+                delete this.toolbar;
+                delete this.options;
                 return;
             }
 

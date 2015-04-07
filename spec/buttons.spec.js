@@ -87,7 +87,7 @@ describe('Buttons TestCase', function () {
             tempEl;
 
         Object.keys(buttonsData).forEach(function (buttonName) {
-            if (buttonName !== 'header1' && buttonName !== 'header2') {
+            if (buttonName && !buttonName.match(/^header\d+/)) {
                 allButtons.push(buttonName);
                 currButton = buttonsData[buttonName];
                 // If the labels contain HTML entities, we need to escape them

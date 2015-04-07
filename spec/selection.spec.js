@@ -1,7 +1,7 @@
 /*global MediumEditor, describe, it, expect, spyOn,
          afterEach, beforeEach, fireEvent,
          jasmine, selectElementContents, tearDown,
-         selectElementContentsAndFire, Selection */
+         selectElementContentsAndFire */
 
 describe('Selection TestCase', function () {
     'use strict';
@@ -22,7 +22,8 @@ describe('Selection TestCase', function () {
     describe('Exposure', function () {
         it("is exposed on the MediumEditor ctor", function () {
             expect(MediumEditor.selection).toBeTruthy();
-            expect(MediumEditor.selection).toEqual(Selection);
+            // moot because no longer global in this branch
+            //expect(MediumEditor.selection).toEqual(Selection);
         });
     });
 

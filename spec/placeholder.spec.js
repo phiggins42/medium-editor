@@ -90,7 +90,7 @@ describe('Placeholder TestCase', function () {
 
     it('should add the default placeholder text when data-placeholder is not present', function () {
         var editor = new MediumEditor('.editor');
-        validatePlaceholderContent(editor.elements[0], editor.options.placeholder);
+        validatePlaceholderContent(editor.elements[0], editor.placeholders.placeholder);
     });
 
     it('should use the data-placeholder when it is present', function () {

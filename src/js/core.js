@@ -271,7 +271,7 @@ define(["./util","./selection"], function(util, Selection){
                     current.setAttribute('contentEditable', true);
                 }
                 if (!current.getAttribute('data-placeholder')) {
-                    current.setAttribute('data-placeholder', this.options.placeholder);
+                    current.setAttribute('data-placeholder', this.options.placeholders.placeholder);
                 }
                 current.setAttribute('data-medium-element', true);
                 current.setAttribute('role', 'textbox');

@@ -19,18 +19,20 @@ define([], function(){
 
         // might consider implications of this, and provide a way away from
         // fa-bulk defaults?
-        buttonLabels: false,
+        // buttonLabels: false,
 
         // is a base delay, not toolbar delay specifically
         delay: 0,
 
-        targetBlank: false,
+        //targetBlank: false,
 
-        disableReturn: false,
-        disableDoubleReturn: false,
+        //disableReturn: false,
+        //disableDoubleReturn: false,
         imageDragging: true,
-        elementsContainer: false,
-        standardizeSelectionStart: false,
+
+        //elementsContainer: false,
+        //standardizeSelectionStart: false,
+
         contentWindow: window,
         ownerDocument: document,
 
