@@ -1,3 +1,5 @@
+/*! MediumEditor - version: 4.2.0 */
+
 /*global FileReader, Util, ButtonsData, DefaultButton,
  PasteHandler, Selection, AnchorExtension,
  Toolbar, AnchorPreview, Events, Placeholders*/
@@ -9,6 +11,20 @@ function MediumEditor(elements, options) {
 
 (function () {
     'use strict';
+
+    MediumEditor.version = (function(major, minor, revision) {
+        return {
+            major: parseInt(major, 10),
+            minor: parseInt(minor, 10),
+            revision: parseInt(revision, 10),
+            toString: function(){
+                return [major, minor, revision].join(".");
+            }
+        };
+    }).apply(this, ({
+        // grunt-bump looks for this:
+        "version": "4.2.0"
+    }).version.split("."));
 
     // Event handlers that shouldn't be exposed externally
 
