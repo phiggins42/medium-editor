@@ -204,7 +204,7 @@ define(["./util","./selection"], function(util, Selection){
         }
     }
 
-    return {
+    var core = {
 
         createElementsArray: function(selector){
             if (!selector) {
@@ -266,7 +266,7 @@ define(["./util","./selection"], function(util, Selection){
 
                 if (!this.options.disableEditing && !current.getAttribute('data-disable-editing')) {
                     if (current.tagName.toLowerCase() === 'textarea') {
-                        current = this.elements[i] = this.createContentEditable.call(this, i);
+                        current = this.elements[i] = core.createContentEditable.call(this, i);
                     }
                     current.setAttribute('contentEditable', true);
                 }
@@ -350,5 +350,7 @@ define(["./util","./selection"], function(util, Selection){
         }
 
     };
+
+    return core;
 
 });
