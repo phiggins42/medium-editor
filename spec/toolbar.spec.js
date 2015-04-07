@@ -257,7 +257,7 @@ describe('Toolbar TestCase', function () {
             this.el.setAttribute('data-disable-toolbar', 'true');
             var editor = new MediumEditor('.editor');
             expect(document.getElementsByClassName('medium-editor-toolbar-actions').length).toEqual(0);
-            expect(editor.toolbar).toBeUndefined();
+            expect(editor.toolbar).toBeFalsy();
         });
 
         it('should not show the toolbar when one element has a data attr of disable-toolbar set and text is selected', function () {

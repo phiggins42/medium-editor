@@ -258,6 +258,8 @@ define(["./util","./selection"], function(util, Selection){
 
         initElements: function() {
 
+            var every_disabled = true;
+
             for (var i = 0; i < this.elements.length; i += 1) {
 
                 var current = this.elements[i];
@@ -274,8 +276,14 @@ define(["./util","./selection"], function(util, Selection){
                 current.setAttribute('data-medium-element', true);
                 current.setAttribute('role', 'textbox');
                 current.setAttribute('aria-multiline', true);
+
+                every_disabled = current.getAttribute("data-disable-toolbar") && every_disabled;
             }
 
+            if(every_disabled){
+                // this means we implicitly have set the anchor preview and toolbar options to false
+                this.options["anchor-preview"] = this.options.toolbar = this.toolbar = false;
+            }
 
             if(this.toolbar){
                 this.options.elementsContainer.appendChild(this.toolbar.getToolbarElement());

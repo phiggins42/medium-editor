@@ -53,16 +53,17 @@ define([
         //  * function - a ctor to use in place of the default, or as a custom
         //          extension.
 
-        var options = util.extend({}, args, optionDefaults);
-        var ctors = util.extend({}, extensionDefaults);
-        var extensions = options.extensions;
+        var options = util.extend({}, args, optionDefaults),
+            ctors = util.extend({}, extensionDefaults),
+            extensions = options.extensions
+        ;
 
         if(extensions){
             // they passed an explicit "extensions" object, which
             // for backwards compat reasons is only a list of
             // instantiated things expecting decorated
             for(var i in extensions){
-                this.commands.push(decorate(extensions[i], i, this));
+                this.commands.push( decorate(extensions[i], i, this) );
             }
         }else{
             extensions = options.extensions = {};
@@ -84,8 +85,8 @@ define([
                 util.deprecated("options." + arg, "options." + newPath, "5.0");
 
                 if(arg === "disableToolbar"){
-                    // ugh. if toolbar disabled, anchor-preview should be disabled too
-                    options["anchor-preview"] = false;
+                    // ugh. if toolbar disabled, anchor-preview implicity should be disabled too. force them both.
+                    options["anchor-preview"] = options.toolbar = false;
                 }
             }
         }
@@ -122,6 +123,7 @@ define([
                     // true just means default ctor is to be enabled
                     extensions[opt] = create(ctors[opt], {}, opt, this);
                 } else if ( typeof current === "object" ) {
+                    // yarg, i dinnalike typeof object.
                     extensions[opt] = create(ctors[opt], current, opt, this);
                 }
 
