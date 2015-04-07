@@ -21,7 +21,6 @@ define([], function(){
         anchorButton: [false, "anchor.anchorButton"],
         anchorButtonClass: ['btn', "anchor.anchorButtonClass"],
         checkLinkFormat: [false, "anchor.validateLink"],
-        targetBlank: [false, "anchor.targetBlank"],
 
         cleanPastedHTML: [false, "paste.cleanPastedHTML"],
         forcePlainText: [true, "paste.forcePlainText"],

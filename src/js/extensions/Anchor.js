@@ -14,7 +14,6 @@ define(["./Button","../selection","../util"], function(Button, Selection, util){
         inputPlaceholder: 'Paste or type a link',
         inputCheckboxLabel: 'Open in new window',
         validateLink: false,
-        targetBlank: false,
         anchorTarget: false,
         anchorButton: false,
         anchorButtonClass: 'btn',

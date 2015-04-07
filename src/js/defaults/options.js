@@ -24,6 +24,8 @@ define([], function(){
         // is a base delay, not toolbar delay specifically
         delay: 0,
 
+        targetBlank: false,
+
         disableReturn: false,
         disableDoubleReturn: false,
         imageDragging: true,

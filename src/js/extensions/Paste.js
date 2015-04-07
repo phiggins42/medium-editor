@@ -131,7 +131,7 @@ define(["./Base","../util","../selection"], function(Extension, util, Selection)
 
                     switch (workEl.tagName.toLowerCase()) {
                     case 'a':
-                        if (this.options.targetBlank) {
+                        if (this.base.options.targetBlank) {
                             util.setTargetBlank(workEl);
                         }
                         break;
@@ -150,10 +150,10 @@ define(["./Base","../util","../selection"], function(Extension, util, Selection)
         },
 
         pasteHTML: function (html, options) {
-            options = util.defaults(options, {
+            options = util.defaults({
                 cleanAttrs: ['class', 'style', 'dir'],
                 cleanTags: ['meta']
-            });
+            }, options);
 
             var elList, workEl, i, fragmentBody, pasteBlock = this.base.options.ownerDocument.createDocumentFragment();
 
