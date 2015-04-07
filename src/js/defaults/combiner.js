@@ -58,6 +58,8 @@ define([
             extensions = options.extensions
         ;
 
+        this.commands = [];
+
         if(extensions){
             // they passed an explicit "extensions" object, which
             // for backwards compat reasons is only a list of

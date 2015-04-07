@@ -60,6 +60,9 @@ define([
             // override hash
 
             this.options = defaults.call(this, args);
+            // ensure this exists even if nothing in our options says we had one
+            if(!this.commands){ this.commands = []; }
+
             this.elements = core.createElementsArray.call(this, elements);
 
             if(!this.elements.length){
@@ -81,17 +84,16 @@ define([
             }
 
             this.isActive = true;
-            this.commands = [];
 
             for(var i in this.options.extensions){
                 var ex = this.options.extensions[i];
                 if (ex.init && typeof ex.init === "function") {
-                    ex.init();
+                    ex.init(this);
                 }
                 this.commands.push(ex);
             }
 
-            if(this.toolbar && this.toolbar.init){ this.toolbar.init(); }
+            if(this.toolbar && this.toolbar.init){ this.toolbar.init(this); }
 
             core.initElements.call(this);
             core.attachHandlers.call(this);
