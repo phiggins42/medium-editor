@@ -149,6 +149,9 @@ define([
         // reference
         delete options.extensions.toolbar;
 
+        // deprecated expectations:
+        this.pasteHandler = this.paste;
+
         return options;
     };
 
