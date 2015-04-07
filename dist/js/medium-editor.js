@@ -3125,30 +3125,23 @@ function MediumEditor(elements, options) {
     }
 
     function shouldAddDefaultAnchorPreview() {
-        var i,
-            shouldAdd = false;
 
         // If anchor-preview is disabled, don't add
-        if (this.options.disableAnchorPreview) {
+        if (this.options.disableAnchorPreview ||
+            // If anchor-preview extension has been overriden, don't add
+            this.options.extensions['anchor-preview'] ||
+            // If toolbar is disabled, don't add
+            this.options.disableToolbar
+        ) {
             return false;
-        }
-        // If anchor-preview extension has been overriden, don't add
-        if (this.options.extensions['anchor-preview']) {
-            return false;
-        }
-        // If toolbar is disabled, don't add
-        if (this.options.disableToolbar) {
-            return false;
-        }
-        // If all elements have 'data-disable-toolbar' attribute, don't add
-        for (i = 0; i < this.elements.length; i += 1) {
-            if (!this.elements[i].getAttribute('data-disable-toolbar')) {
-                shouldAdd = true;
-                break;
-            }
         }
 
-        return shouldAdd;
+        // If all elements have 'data-disable-toolbar' attribute, don't add
+        return this.elements.some(function(el){
+            // IOW, if any don't have it, go ahead and add
+            return !el.getAttribute('data-disable-toolbar');
+        });
+
     }
 
     function createContentEditable(index) {
