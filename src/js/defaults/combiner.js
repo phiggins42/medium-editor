@@ -136,10 +136,10 @@ define([
                 // this is a bit of magic. toolbars and events and things
                 // are instantiated and used locally.
                 if( opt in this ){
-                    util.warn("cowardly not overwriting core property:", opt);
-                }else {
-                    this[opt] = extensions[opt];
+                    util.warn("WARNING: overwriting core editor property:", opt);
                 }
+                this[opt] = extensions[opt];
+
 
             }
         }

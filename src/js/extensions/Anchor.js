@@ -136,7 +136,7 @@ define(["./Button","../selection","../util"], function(Button, Selection, util){
                     url: this.getInput().value
                 };
 
-            if (this.validateLinkFormat) {
+            if (this.validateLink) {
                 opts.url = this.checkLinkFormat(opts.url);
             }
 
