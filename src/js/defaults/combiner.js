@@ -105,8 +105,12 @@ define([
                 // this is a default-extension with no override
                 extensions[button] = create(ctors[button], {}, button, this);
             }
-
         }, this);
+
+        if (!~options.buttons.indexOf("anchor")) {
+            // ensure we don't load anchor extension if not a button
+            options.anchor = false;
+        }
 
         for (var opt in options) {
             // now walk over the settings object to see if anyone passed anything
