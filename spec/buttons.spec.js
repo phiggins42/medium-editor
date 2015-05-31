@@ -72,6 +72,21 @@ describe('Buttons TestCase', function () {
             });
             expect(editor.execAction).toHaveBeenCalled();
         });
+
+        it('should not execute the button action when shift key is pressed', function () {
+            spyOn(MediumEditor.prototype, 'execAction');
+            var editor = this.newMediumEditor('.editor'),
+                code = 'b'.charCodeAt(0);
+            selectElementContentsAndFire(editor.elements[0]);
+            jasmine.clock().tick(1);
+            fireEvent(editor.elements[0], 'keydown', {
+                keyCode: code,
+                ctrlKey: true,
+                metaKey: true,
+                shiftKey: true
+            });
+            expect(editor.execAction).not.toHaveBeenCalled();
+        });
     });
 
     describe('Buttons with various labels', function () {
@@ -120,7 +135,6 @@ describe('Buttons TestCase', function () {
         });
 
         it('should contain default content if no custom labels are provided', function () {
-            spyOn(MediumEditor.prototype, 'execAction');
             var button,
                 editor = this.newMediumEditor('.editor', {
                     buttons: allButtons
@@ -526,6 +540,24 @@ describe('Buttons TestCase', function () {
             fireEvent(button, 'click');
             selectElementContentsAndFire(document.getElementById('span-lorem'));
             expect(button.classList.contains('medium-editor-button-active')).toBe(true);
+        });
+    });
+
+    describe('Image', function () {
+        it('should create an image', function () {
+            spyOn(document, 'execCommand').and.callThrough();
+            var editor = this.newMediumEditor('.editor', {
+                    buttons: ['image']
+                }),
+                button = editor.toolbar.getToolbarElement().querySelector('[data-action="image"]');
+
+            this.el.innerHTML = '<span id="span-image">http://i.imgur.com/twlXfUq.jpg</span>';
+            selectElementContentsAndFire(document.getElementById('span-image'));
+
+            fireEvent(button, 'click');
+
+            expect(this.el.innerHTML).toContain('<img src="http://i.imgur.com/twlXfUq.jpg">');
+            expect(document.execCommand).toHaveBeenCalledWith('insertImage', false, window.getSelection());
         });
     });
 

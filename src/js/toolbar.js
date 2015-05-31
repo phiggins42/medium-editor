@@ -5,7 +5,7 @@ var Toolbar;
 (function () {
     'use strict';
 
-    Toolbar = function Toolbar(instance) {
+    Toolbar = function (instance) {
         this.base = instance;
         this.options = instance.options;
 
@@ -13,7 +13,6 @@ var Toolbar;
     };
 
     Toolbar.prototype = {
-
         // Toolbar creation/deletion
 
         createToolbar: function () {
@@ -76,13 +75,18 @@ var Toolbar;
             return ul;
         },
 
-        deactivate: function () {
+        destroy: function () {
             if (this.toolbar) {
                 if (this.toolbar.parentNode) {
                     this.toolbar.parentNode.removeChild(this.toolbar);
                 }
                 delete this.toolbar;
             }
+        },
+
+        // TODO: deprecate
+        deactivate: function () {
+            Util.deprecatedMethod.call(this, 'deactivate', 'destroy', arguments, 'v5.0.0');
         },
 
         // Toolbar accessors
@@ -113,7 +117,6 @@ var Toolbar;
         },
 
         attachEventHandlers: function () {
-
             // MediumEditor custom events for when user beings and ends interaction with a contenteditable and its elements
             this.base.subscribe('blur', this.handleBlur.bind(this));
             this.base.subscribe('focus', this.handleFocus.bind(this));
@@ -306,44 +309,41 @@ var Toolbar;
         },
 
         checkState: function () {
-
-            if (!this.base.preventSelectionUpdates) {
-
-                // If no editable has focus OR selection is inside contenteditable = false
-                // hide toolbar
-                if (!this.base.getFocusedElement() ||
-                        Selection.selectionInContentEditableFalse(this.options.contentWindow)) {
-                    this.hideToolbar();
-                    return;
-                }
-
-                // If there's no selection element, selection element doesn't belong to this editor
-                // or toolbar is disabled for this selection element
-                // hide toolbar
-                var selectionElement = Selection.getSelectionElement(this.options.contentWindow);
-                if (!selectionElement ||
-                        this.base.elements.indexOf(selectionElement) === -1 ||
-                        selectionElement.getAttribute('data-disable-toolbar')) {
-                    this.hideToolbar();
-                    return;
-                }
-
-                // Now we know there's a focused editable with a selection
-
-                // If the updateOnEmptySelection option is true, show the toolbar
-                if (this.options.updateOnEmptySelection && this.options.staticToolbar) {
-                    this.showAndUpdateToolbar();
-                    return;
-                }
-
-                // If we don't have a 'valid' selection -> hide toolbar
-                if (this.options.contentWindow.getSelection().toString().trim() === '' ||
-                    (this.options.allowMultiParagraphSelection === false && this.multipleBlockElementsSelected())) {
-                    this.hideToolbar();
-                } else {
-                    this.showAndUpdateToolbar();
-                }
+            if (this.base.preventSelectionUpdates) {
+                return;
             }
+
+            // If no editable has focus OR selection is inside contenteditable = false
+            // hide toolbar
+            if (!this.base.getFocusedElement() ||
+                    Selection.selectionInContentEditableFalse(this.options.contentWindow)) {
+                return this.hideToolbar();
+            }
+
+            // If there's no selection element, selection element doesn't belong to this editor
+            // or toolbar is disabled for this selection element
+            // hide toolbar
+            var selectionElement = Selection.getSelectionElement(this.options.contentWindow);
+            if (!selectionElement ||
+                    this.base.elements.indexOf(selectionElement) === -1 ||
+                    selectionElement.getAttribute('data-disable-toolbar')) {
+                return this.hideToolbar();
+            }
+
+            // Now we know there's a focused editable with a selection
+
+            // If the updateOnEmptySelection option is true, show the toolbar
+            if (this.options.updateOnEmptySelection && this.options.staticToolbar) {
+                return this.showAndUpdateToolbar();
+            }
+
+            // If we don't have a 'valid' selection -> hide toolbar
+            if (this.options.contentWindow.getSelection().toString().trim() === '' ||
+                (this.options.allowMultiParagraphSelection === false && this.multipleBlockElementsSelected())) {
+                return this.hideToolbar();
+            }
+
+            this.showAndUpdateToolbar();
         },
 
         // leaving here backward compatibility / statics
@@ -356,7 +356,7 @@ var Toolbar;
         showAndUpdateToolbar: function () {
             this.modifySelection();
             this.setToolbarButtonStates();
-            this.base.trigger('updateToolbar', {}, this.base.getFocusedElement());
+            this.base.trigger('positionToolbar', {}, this.base.getFocusedElement());
             this.showToolbarDefaultActions();
             this.setToolbarPosition();
         },
@@ -368,13 +368,14 @@ var Toolbar;
                     extension.setInactive();
                 }
             }.bind(this));
+
             this.checkActiveButtons();
         },
 
         checkActiveButtons: function () {
             var manualStateChecks = [],
                 queryState = null,
-                selectionRange = Util.getSelectionRange(this.options.ownerDocument),
+                selectionRange = Selection.getSelectionRange(this.options.ownerDocument),
                 parentNode,
                 updateExtensionState = function (extension) {
                     if (typeof extension.checkState === 'function') {
@@ -445,7 +446,6 @@ var Toolbar;
             if (this.options.staticToolbar) {
                 this.showToolbar();
                 this.positionStaticToolbar(container);
-
             } else if (!selection.isCollapsed) {
                 this.showToolbar();
                 this.positionToolbar(selection);
@@ -494,12 +494,18 @@ var Toolbar;
                 toolbarElement.style.top = containerTop - toolbarHeight + 'px';
             }
 
-            if (this.options.toolbarAlign === 'left') {
-                targetLeft = containerRect.left;
-            } else if (this.options.toolbarAlign === 'center') {
-                targetLeft = containerCenter - halfOffsetWidth;
-            } else if (this.options.toolbarAlign === 'right') {
-                targetLeft = containerRect.right - toolbarWidth;
+            switch (this.options.toolbarAlign) {
+                case 'left':
+                    targetLeft = containerRect.left;
+                    break;
+
+                case 'right':
+                    targetLeft = containerRect.right - toolbarWidth;
+                    break;
+
+                case 'center':
+                    targetLeft = containerCenter - halfOffsetWidth;
+                    break;
             }
 
             if (targetLeft < 0) {
@@ -535,6 +541,7 @@ var Toolbar;
                 toolbarElement.classList.remove('medium-toolbar-arrow-over');
                 toolbarElement.style.top = boundary.top + this.options.diffTop + this.options.contentWindow.pageYOffset - toolbarHeight + 'px';
             }
+
             if (middleBoundary < halfOffsetWidth) {
                 toolbarElement.style.left = defaultLeft + halfOffsetWidth + 'px';
             } else if ((windowWidth - middleBoundary) < halfOffsetWidth) {

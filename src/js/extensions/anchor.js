@@ -5,7 +5,6 @@ var AnchorForm;
     /*global Util, Selection, FormExtension */
 
     AnchorForm = FormExtension.extend({
-
         /* Anchor Form Options */
 
         /* customClassOption: [string]  (previously options.anchorButton + options.anchorButtonClass)
@@ -41,10 +40,6 @@ var AnchorForm;
          */
         targetCheckboxText: 'Open in new window',
 
-        /* ----- internal options needed from base ----- */
-        'window': window,
-        'document': document,
-
         // Options for the Button base class
         name: 'anchor',
         action: 'createLink',
@@ -56,14 +51,14 @@ var AnchorForm;
 
         // Called when the button the toolbar is clicked
         // Overrides ButtonExtension.handleClick
-        handleClick: function (evt) {
-            evt.preventDefault();
-            evt.stopPropagation();
+        handleClick: function (event) {
+            event.preventDefault();
+            event.stopPropagation();
 
-            var selectedParentElement = Selection.getSelectedParentElement(Util.getSelectionRange(this.document));
+            var selectedParentElement = Selection.getSelectedParentElement(Selection.getSelectionRange(this.document));
             if (selectedParentElement.tagName &&
                     selectedParentElement.tagName.toLowerCase() === 'a') {
-                return this.base.execAction('unlink');
+                return this.execAction('unlink');
             }
 
             if (!this.isDisplayed()) {
@@ -75,11 +70,9 @@ var AnchorForm;
 
         // Called when user hits the defined shortcut (CTRL / COMMAND + K)
         // Overrides Button.handleKeydown
-        handleKeydown: function (evt) {
-            var key = String.fromCharCode(evt.which || evt.keyCode).toLowerCase();
-
-            if (this.key === key && Util.isMetaCtrlKey(evt)) {
-                this.handleClick(evt);
+        handleKeydown: function (event) {
+            if (Util.isKey(event, this.key.charCodeAt(0)) && Util.isMetaCtrlKey(event)) {
+                this.handleClick(event);
             }
         },
 
@@ -92,19 +85,18 @@ var AnchorForm;
         },
 
         getTemplate: function () {
-
             var template = [
                 '<input type="text" class="medium-editor-toolbar-input" placeholder="', this.placeholderText, '">'
             ];
 
             template.push(
                 '<a href="#" class="medium-editor-toolbar-save">',
-                this.base.options.buttonLabels === 'fontawesome' ? '<i class="fa fa-check"></i>' : this.formSaveLabel,
+                this.getEditorOption('buttonLabels') === 'fontawesome' ? '<i class="fa fa-check"></i>' : this.formSaveLabel,
                 '</a>'
             );
 
             template.push('<a href="#" class="medium-editor-toolbar-close">',
-                this.base.options.buttonLabels === 'fontawesome' ? '<i class="fa fa-times"></i>' : this.formCloseLabel,
+                this.getEditorOption('buttonLabels') === 'fontawesome' ? '<i class="fa fa-times"></i>' : this.formCloseLabel,
                 '</a>');
 
             // both of these options are slightly moot with the ability to
@@ -158,8 +150,8 @@ var AnchorForm;
             input.focus();
         },
 
-        // Called by core when tearing down medium-editor (deactivate)
-        deactivate: function () {
+        // Called by core when tearing down medium-editor (destroy)
+        destroy: function () {
             if (!this.form) {
                 return false;
             }
@@ -169,6 +161,11 @@ var AnchorForm;
             }
 
             delete this.form;
+        },
+
+        // TODO: deprecate
+        deactivate: function () {
+            Util.deprecatedMethod.call(this, 'deactivate', 'destroy', arguments, 'v5.0.0');
         },
 
         // core methods
@@ -185,10 +182,9 @@ var AnchorForm;
                 opts.url = this.checkLinkFormat(opts.url);
             }
 
+            opts.target = '_self';
             if (targetCheckbox && targetCheckbox.checked) {
                 opts.target = '_blank';
-            } else {
-                opts.target = '_self';
             }
 
             if (buttonCheckbox && buttonCheckbox.checked) {
@@ -205,7 +201,7 @@ var AnchorForm;
 
         completeFormSave: function (opts) {
             this.base.restoreSelection();
-            this.base.createLink(opts);
+            this.execAction(this.action, opts);
             this.base.checkSelection();
         },
 
@@ -220,23 +216,22 @@ var AnchorForm;
         },
 
         // form creation and event handling
-
         attachFormEvents: function (form) {
             var close = form.querySelector('.medium-editor-toolbar-close'),
                 save = form.querySelector('.medium-editor-toolbar-save'),
                 input = form.querySelector('.medium-editor-toolbar-input');
 
             // Handle clicks on the form itself
-            this.base.on(form, 'click', this.handleFormClick.bind(this));
+            this.on(form, 'click', this.handleFormClick.bind(this));
 
             // Handle typing in the textbox
-            this.base.on(input, 'keyup', this.handleTextboxKeyup.bind(this));
+            this.on(input, 'keyup', this.handleTextboxKeyup.bind(this));
 
             // Handle close button clicks
-            this.base.on(close, 'click', this.handleCloseClick.bind(this));
+            this.on(close, 'click', this.handleCloseClick.bind(this));
 
             // Handle save button clicks (capture)
-            this.base.on(save, 'click', this.handleSaveClick.bind(this), true);
+            this.on(save, 'click', this.handleSaveClick.bind(this), true);
 
         },
 
@@ -246,7 +241,7 @@ var AnchorForm;
 
             // Anchor Form (div)
             form.className = 'medium-editor-toolbar-form';
-            form.id = 'medium-editor-toolbar-form-anchor-' + this.base.id;
+            form.id = 'medium-editor-toolbar-form-anchor-' + this.getEditorId();
             form.innerHTML = this.getTemplate();
             this.attachFormEvents(form);
 

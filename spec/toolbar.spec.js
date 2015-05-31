@@ -88,6 +88,37 @@ describe('Toolbar TestCase', function () {
             expect(callback).toHaveBeenCalledWith({}, this.el);
         });
 
+        it('should trigger positionToolbar custom event when toolbar is moved', function () {
+            var editor = this.newMediumEditor('.editor'),
+                callback = jasmine.createSpy();
+
+            this.el.innerHTML = 'specOnUpdateToolbarTest';
+            editor.subscribe('positionToolbar', callback);
+
+            selectElementContentsAndFire(this.el, { eventToFire: 'focus' });
+
+            expect(callback).toHaveBeenCalledWith({}, this.el);
+
+        });
+
+        it('should trigger positionToolbar before position called', function () {
+            var editor = this.newMediumEditor('.editor'),
+                temp = {
+                    update: function () {
+                        expect(editor.toolbar.positionToolbar).not.toHaveBeenCalled();
+                    }
+                };
+
+            spyOn(editor.toolbar, 'positionToolbar').and.callThrough();
+            spyOn(temp, 'update').and.callThrough();
+            this.el.innerHTML = 'position sanity check';
+            editor.subscribe('positionToolbar', temp.update);
+            selectElementContentsAndFire(this.el, { eventToFire: 'focus' });
+
+            expect(temp.update).toHaveBeenCalled();
+            expect(editor.toolbar.positionToolbar).toHaveBeenCalled();
+        });
+
         it('should trigger the hideToolbar custom event when toolbar is hidden', function () {
             var editor = this.newMediumEditor('.editor'),
                 callback = jasmine.createSpy();
@@ -243,7 +274,7 @@ describe('Toolbar TestCase', function () {
             });
 
             selectElementContentsAndFire(this.el.querySelector('b'));
-            window.getSelection().getRangeAt(0).collapse(false);
+            window.getSelection().removeAllRanges();
             editor.checkSelection();
             jasmine.clock().tick(1); // checkSelection delay
             expect(editor.toolbar.getToolbarElement().classList.contains('medium-editor-toolbar-active')).toBe(true);
@@ -378,6 +409,59 @@ describe('Toolbar TestCase', function () {
             spyOn(Toolbar.prototype, 'positionToolbarIfShown');
             fireEvent(window, 'scroll');
             expect(editor.toolbar.positionToolbarIfShown).toHaveBeenCalled();
+        });
+    });
+
+    describe('Static & sticky toolbar position', function () {
+        it('should position static + sticky toolbar on the left', function () {
+            this.el.innerHTML = '<b>lorem ipsum</b>';
+            var editor = this.newMediumEditor('.editor', {
+                staticToolbar: true,
+                stickyToolbar: true,
+                toolbarAlign: 'left'
+            }),
+            toolbar = editor.toolbar.getToolbarElement();
+
+            selectElementContentsAndFire(this.el.querySelector('b'));
+            window.getSelection().getRangeAt(0).collapse(false);
+            editor.checkSelection();
+            jasmine.clock().tick(1); // checkSelection delay
+
+            expect(toolbar.style.left).not.toBe('');
+        });
+
+        it('should position static + sticky toolbar on the right', function () {
+            this.el.innerHTML = '<b>lorem ipsum</b>';
+            var editor = this.newMediumEditor('.editor', {
+                staticToolbar: true,
+                stickyToolbar: true,
+                toolbarAlign: 'right'
+            }),
+            toolbar = editor.toolbar.getToolbarElement();
+
+            selectElementContentsAndFire(this.el.querySelector('b'));
+            window.getSelection().getRangeAt(0).collapse(false);
+            editor.checkSelection();
+            jasmine.clock().tick(1); // checkSelection delay
+
+            expect(toolbar.style.left).not.toBe('');
+        });
+
+        it('should position static + sticky toolbar on the center', function () {
+            this.el.innerHTML = '<b>lorem ipsum</b>';
+            var editor = this.newMediumEditor('.editor', {
+                staticToolbar: true,
+                stickyToolbar: true,
+                toolbarAlign: 'center'
+            }),
+            toolbar = editor.toolbar.getToolbarElement();
+
+            selectElementContentsAndFire(this.el.querySelector('b'));
+            window.getSelection().getRangeAt(0).collapse(false);
+            editor.checkSelection();
+            jasmine.clock().tick(1); // checkSelection delay
+
+            expect(toolbar.style.left).not.toBe('');
         });
     });
 });

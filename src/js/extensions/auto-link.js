@@ -29,13 +29,19 @@ LINK_REGEXP_TEXT =
     }
 
     AutoLink = Extension.extend({
-
         init: function () {
             this.disableEventHandling = false;
-            this.base.subscribe('editableKeypress', this.onKeypress.bind(this));
-            this.base.subscribe('editableBlur', this.onBlur.bind(this));
+            this.subscribe('editableKeypress', this.onKeypress.bind(this));
+            this.subscribe('editableBlur', this.onBlur.bind(this));
             // MS IE has it's own auto-URL detect feature but ours is better in some ways. Be consistent.
             this.document.execCommand('AutoUrlDetect', false, false);
+        },
+
+        destroy: function () {
+            // Turn AutoUrlDetect back on
+            if (this.document.queryCommandSupported('AutoUrlDetect')) {
+                this.document.execCommand('AutoUrlDetect', false, true);
+            }
         },
 
         onBlur: function (blurEvent, editable) {
@@ -47,9 +53,7 @@ LINK_REGEXP_TEXT =
                 return;
             }
 
-            if (keyPressEvent.keyCode === Util.keyCode.SPACE ||
-                    keyPressEvent.keyCode === Util.keyCode.ENTER ||
-                    keyPressEvent.which === Util.keyCode.SPACE) {
+            if (Util.isKey(keyPressEvent, [Util.keyCode.SPACE, Util.keyCode.ENTER])) {
                 clearTimeout(this.performLinkingTimeout);
                 // Saving/restoring the selection in the middle of a keypress doesn't work well...
                 this.performLinkingTimeout = setTimeout(function () {
@@ -160,6 +164,7 @@ LINK_REGEXP_TEXT =
                 // If the regexp detected a bare domain that doesn't use one of our expected TLDs, bail out.
                 matchOk = matchOk && (match[0].indexOf('/') !== -1 ||
                     KNOWN_TLDS_REGEXP.test(match[0].split('.').pop().split('?').shift()));
+
                 if (matchOk) {
                     matches.push({
                         href: match[0],
@@ -172,8 +177,7 @@ LINK_REGEXP_TEXT =
         },
 
         findOrCreateMatchingTextNodes: function (element, match) {
-            var treeWalker = this.document.createTreeWalker(element, NodeFilter.SHOW_TEXT,
-                    null, false),
+            var treeWalker = this.document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false),
                 matchedNodes = [],
                 currentTextIndex = 0,
                 startReached = false,

@@ -17,7 +17,7 @@ function MediumEditor(elements, options) {
         if (this.options.disableReturn || element.getAttribute('data-disable-return')) {
             event.preventDefault();
         } else if (this.options.disableDoubleReturn || element.getAttribute('data-disable-double-return')) {
-            var node = Util.getSelectionStart(this.options.ownerDocument);
+            var node = Selection.getSelectionStart(this.options.ownerDocument);
 
             // if current text selection is empty OR previous sibling text is empty
             if ((node && node.textContent.trim() === '') ||
@@ -29,7 +29,7 @@ function MediumEditor(elements, options) {
 
     function handleTabKeydown(event) {
         // Override tab only for pre nodes
-        var node = Util.getSelectionStart(this.options.ownerDocument),
+        var node = Selection.getSelectionStart(this.options.ownerDocument),
             tag = node && node.tagName.toLowerCase();
 
         if (tag === 'pre') {
@@ -51,25 +51,25 @@ function MediumEditor(elements, options) {
     }
 
     function handleBlockDeleteKeydowns(event) {
-        var p, node = Util.getSelectionStart(this.options.ownerDocument),
+        var p, node = Selection.getSelectionStart(this.options.ownerDocument),
             tagName = node.tagName.toLowerCase(),
             isEmpty = /^(\s+|<br\/?>)?$/i,
             isHeader = /h\d/i;
 
-        if ((event.which === Util.keyCode.BACKSPACE || event.which === Util.keyCode.ENTER) &&
+        if (Util.isKey(event, [Util.keyCode.BACKSPACE, Util.keyCode.ENTER]) &&
                 // has a preceeding sibling
                 node.previousElementSibling &&
                 // in a header
                 isHeader.test(tagName) &&
                 // at the very end of the block
                 Selection.getCaretOffsets(node).left === 0) {
-            if (event.which === Util.keyCode.BACKSPACE && isEmpty.test(node.previousElementSibling.innerHTML)) {
+            if (Util.isKey(event, Util.keyCode.BACKSPACE) && isEmpty.test(node.previousElementSibling.innerHTML)) {
                 // backspacing the begining of a header into an empty previous element will
                 // change the tagName of the current node to prevent one
                 // instead delete previous node and cancel the event.
                 node.previousElementSibling.parentNode.removeChild(node.previousElementSibling);
                 event.preventDefault();
-            } else if (event.which === Util.keyCode.ENTER) {
+            } else if (Util.isKey(event, Util.keyCode.ENTER)) {
                 // hitting return in the begining of a header will create empty header elements before the current one
                 // instead, make "<p><br></p>" element, which are what happens if you hit return in an empty paragraph
                 p = this.options.ownerDocument.createElement('p');
@@ -77,7 +77,7 @@ function MediumEditor(elements, options) {
                 node.previousElementSibling.parentNode.insertBefore(p, node);
                 event.preventDefault();
             }
-        } else if (event.which === Util.keyCode.DELETE &&
+        } else if (Util.isKey(event, Util.keyCode.DELETE) &&
                     // between two sibling elements
                     node.nextElementSibling &&
                     node.previousElementSibling &&
@@ -98,7 +98,7 @@ function MediumEditor(elements, options) {
             node.previousElementSibling.parentNode.removeChild(node);
 
             event.preventDefault();
-        } else if (event.which === Util.keyCode.BACKSPACE &&
+        } else if (Util.isKey(event, Util.keyCode.BACKSPACE) &&
                 tagName === 'li' &&
                 // hitting backspace inside an empty li
                 isEmpty.test(node.innerHTML) &&
@@ -133,7 +133,7 @@ function MediumEditor(elements, options) {
     }
 
     function handleKeyup(event) {
-        var node = Util.getSelectionStart(this.options.ownerDocument),
+        var node = Selection.getSelectionStart(this.options.ownerDocument),
             tagName;
 
         if (!node) {
@@ -144,7 +144,7 @@ function MediumEditor(elements, options) {
             this.options.ownerDocument.execCommand('formatBlock', false, 'p');
         }
 
-        if (event.which === Util.keyCode.ENTER && !Util.isListItem(node)) {
+        if (Util.isKey(event, Util.keyCode.ENTER) && !Util.isListItem(node)) {
             tagName = node.tagName.toLowerCase();
             // For anchor tags, unlink
             if (tagName === 'a') {
@@ -404,9 +404,9 @@ function MediumEditor(elements, options) {
         // Backwards compatability
         var defaultsBC = {
             hideDelay: this.options.anchorPreviewHideDelay, // deprecated
-            diffLeft: this.options.diffLeft,
-            diffTop: this.options.diffTop,
-            elementsContainer: this.options.elementsContainer
+            diffLeft: this.options.diffLeft, // deprecated (should use .getEditorOption() instead)
+            diffTop: this.options.diffTop, // deprecated (should use .getEditorOption() instead)
+            elementsContainer: this.options.elementsContainer // deprecated (should use .getEditorOption() instead)
         };
 
         return new MediumEditor.extensions.anchorPreview(
@@ -434,8 +434,8 @@ function MediumEditor(elements, options) {
         var defaultsBC = {
             forcePlainText: this.options.forcePlainText, // deprecated
             cleanPastedHTML: this.options.cleanPastedHTML, // deprecated
-            disableReturn: this.options.disableReturn,
-            targetBlank: this.options.targetBlank
+            disableReturn: this.options.disableReturn, // deprecated (should use .getEditorOption() instead)
+            targetBlank: this.options.targetBlank // deprecated (should use .getEditorOption() instead)
         };
 
         return new MediumEditor.extensions.paste(
@@ -449,13 +449,6 @@ function MediumEditor(elements, options) {
             ext,
             name;
         this.commands = [];
-
-        // add toolbar custom events to the list of known events by the editor
-        // we need to have this for the initialization of extensions
-        // initToolbar is called after initCommands
-        // add toolbar custom events to the list of known events by the editor
-        this.createEvent('showToolbar');
-        this.createEvent('hideToolbar');
 
         buttons.forEach(function (buttonName) {
             if (extensions[buttonName]) {
@@ -532,6 +525,7 @@ function MediumEditor(elements, options) {
                 Util.deprecated('placeholder', 'placeholder.text', 'v5.0.0');
             }
         }
+
         return Util.defaults({}, options, defaults);
     }
 
@@ -580,7 +574,6 @@ function MediumEditor(elements, options) {
     MediumEditor.selection = Selection;
 
     MediumEditor.prototype = {
-
         defaults: editorDefaults,
 
         // NOT DOCUMENTED - exposed for backwards compatability
@@ -630,12 +623,26 @@ function MediumEditor(elements, options) {
 
             this.isActive = false;
 
+            this.commands.forEach(function (extension) {
+                if (typeof extension.destroy === 'function') {
+                    extension.destroy();
+                } else if (typeof extension.deactivate === 'function') {
+                    Util.warn('Extension .deactivate() function has been deprecated. Use .destroy() instead. This will be removed in version 5.0.0');
+                    extension.deactivate();
+                }
+            }, this);
+
             if (this.toolbar !== undefined) {
-                this.toolbar.deactivate();
+                this.toolbar.destroy();
                 delete this.toolbar;
             }
 
             this.elements.forEach(function (element) {
+                // Reset elements content, fix for issue where after editor destroyed the red underlines on spelling errors are left
+                if (this.options.spellcheck) {
+                    element.innerHTML = element.innerHTML;
+                }
+
                 element.removeAttribute('contentEditable');
                 element.removeAttribute('spellcheck');
                 element.removeAttribute('data-medium-element');
@@ -653,12 +660,6 @@ function MediumEditor(elements, options) {
                 }
             }, this);
             this.elements = [];
-
-            this.commands.forEach(function (extension) {
-                if (typeof extension.deactivate === 'function') {
-                    extension.deactivate();
-                }
-            }, this);
 
             this.events.destroy();
         },
@@ -679,8 +680,9 @@ function MediumEditor(elements, options) {
             this.events.detachCustomEvent(event, listener);
         },
 
-        createEvent: function (event) {
-            this.events.defineCustomEvent(event);
+        createEvent: function () {
+            Util.warn('.createEvent() has been deprecated and is no longer needed. ' +
+                'You can attach and trigger custom events without calling this method.  This will be removed in v5.0.0');
         },
 
         trigger: function (name, data, editable) {
@@ -1009,11 +1011,11 @@ function MediumEditor(elements, options) {
                 this.options.ownerDocument.execCommand('createLink', false, opts.url);
 
                 if (this.options.targetBlank || opts.target === '_blank') {
-                    Util.setTargetBlank(Util.getSelectionStart(this.options.ownerDocument), opts.url);
+                    Util.setTargetBlank(Selection.getSelectionStart(this.options.ownerDocument), opts.url);
                 }
 
                 if (opts.buttonClass) {
-                    Util.addClassToAnchors(Util.getSelectionStart(this.options.ownerDocument), opts.buttonClass);
+                    Util.addClassToAnchors(Selection.getSelectionStart(this.options.ownerDocument), opts.buttonClass);
                 }
             }
 

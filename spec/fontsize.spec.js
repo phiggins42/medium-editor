@@ -44,7 +44,7 @@ describe('Font Size Button TestCase', function () {
     describe('Font Size', function () {
         it('should change font size when slider is moved', function () {
             spyOn(document, 'execCommand').and.callThrough();
-            var editor = this.newMediumEditor('.editor', this.mediumOpts),
+            var editor = this.newMediumEditor('.editor', { buttons: ['fontsize'], buttonLabels: 'fontawesome' }),
                 fontSizeExtension = editor.getExtensionByName('fontsize'),
                 button,
                 input;
@@ -136,15 +136,15 @@ describe('Font Size Button TestCase', function () {
     });
 
     describe('Destroying MediumEditor', function () {
-        it('should deactivate the font size extension and remove the form', function () {
-            spyOn(FontSizeForm.prototype, 'deactivate').and.callThrough();
+        it('should destroy the font size extension and remove the form', function () {
+            spyOn(FontSizeForm.prototype, 'destroy').and.callThrough();
             var editor = this.newMediumEditor('.editor', this.mediumOpts),
                 fontSizeExtension = editor.getExtensionByName('fontsize');
 
             expect(document.getElementById('medium-editor-toolbar-form-fontsize-1')).toBeTruthy();
             editor.destroy();
 
-            expect(fontSizeExtension.deactivate).toHaveBeenCalled();
+            expect(fontSizeExtension.destroy).toHaveBeenCalled();
             expect(document.getElementById('medium-editor-toolbar-form-fontsize-1')).not.toBeTruthy();
         });
     });

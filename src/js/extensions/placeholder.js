@@ -26,11 +26,19 @@ var Placeholder;
         },
 
         initPlaceholders: function () {
-            this.base.elements.forEach(function (el) {
+            this.getEditorElements().forEach(function (el) {
                 if (!el.getAttribute('data-placeholder')) {
                     el.setAttribute('data-placeholder', this.text);
                 }
                 this.updatePlaceholder(el);
+            }, this);
+        },
+
+        destroy: function () {
+            this.getEditorElements().forEach(function (el) {
+                if (el.getAttribute('data-placeholder') === this.text) {
+                    el.removeAttribute('data-placeholder');
+                }
             }, this);
         },
 
@@ -49,29 +57,29 @@ var Placeholder;
         updatePlaceholder: function (el) {
             // if one of these element ('img, blockquote, ul, ol') are found inside the given element, we won't display the placeholder
             if (!(el.querySelector('img, blockquote, ul, ol')) && el.textContent.replace(/^\s+|\s+$/g, '') === '') {
-                this.showPlaceholder(el);
-            } else {
-                this.hidePlaceholder(el);
+                return this.showPlaceholder(el);
             }
+
+            this.hidePlaceholder(el);
         },
 
         attachEventHandlers: function () {
             // Custom events
-            this.base.subscribe('blur', this.handleExternalInteraction.bind(this));
+            this.subscribe('blur', this.handleExternalInteraction.bind(this));
 
             // Check placeholder on blur
-            this.base.subscribe('editableBlur', this.handleBlur.bind(this));
+            this.subscribe('editableBlur', this.handleBlur.bind(this));
 
             // if we don't want the placeholder to be removed on click but when user start typing
             if (this.hideOnClick) {
-                this.base.subscribe('editableClick', this.handleHidePlaceholderEvent.bind(this));
+                this.subscribe('editableClick', this.handleHidePlaceholderEvent.bind(this));
             } else {
-                this.base.subscribe('editableKeyup', this.handleBlur.bind(this));
+                this.subscribe('editableKeyup', this.handleBlur.bind(this));
             }
 
             // Events where we always hide the placeholder
-            this.base.subscribe('editableKeypress', this.handleHidePlaceholderEvent.bind(this));
-            this.base.subscribe('editablePaste', this.handleHidePlaceholderEvent.bind(this));
+            this.subscribe('editableKeypress', this.handleHidePlaceholderEvent.bind(this));
+            this.subscribe('editablePaste', this.handleHidePlaceholderEvent.bind(this));
         },
 
         handleHidePlaceholderEvent: function (event, element) {

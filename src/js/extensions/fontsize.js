@@ -2,7 +2,7 @@ var FontSizeForm;
 (function () {
     'use strict';
 
-    /*global FormExtension, Selection */
+    /*global FormExtension, Selection, Util */
 
     FontSizeForm = FormExtension.extend({
 
@@ -57,8 +57,8 @@ var FontSizeForm;
             input.focus();
         },
 
-        // Called by core when tearing down medium-editor (deactivate)
-        deactivate: function () {
+        // Called by core when tearing down medium-editor (destroy)
+        destroy: function () {
             if (!this.form) {
                 return false;
             }
@@ -68,6 +68,11 @@ var FontSizeForm;
             }
 
             delete this.form;
+        },
+
+        // TODO: deprecate
+        deactivate: function () {
+            Util.deprecatedMethod.call(this, 'deactivate', 'destroy', arguments, 'v5.0.0');
         },
 
         // core methods
@@ -84,7 +89,6 @@ var FontSizeForm;
         },
 
         // form creation and event handling
-
         createForm: function () {
             var doc = this.document,
                 form = doc.createElement('div'),
@@ -94,10 +98,10 @@ var FontSizeForm;
 
             // Font Size Form (div)
             form.className = 'medium-editor-toolbar-form';
-            form.id = 'medium-editor-toolbar-form-fontsize-' + this.base.id;
+            form.id = 'medium-editor-toolbar-form-fontsize-' + this.getEditorId();
 
             // Handle clicks on the form itself
-            this.base.on(form, 'click', this.handleFormClick.bind(this));
+            this.on(form, 'click', this.handleFormClick.bind(this));
 
             // Add font size slider
             input.setAttribute('type', 'range');
@@ -107,29 +111,29 @@ var FontSizeForm;
             form.appendChild(input);
 
             // Handle typing in the textbox
-            this.base.on(input, 'change', this.handleSliderChange.bind(this));
+            this.on(input, 'change', this.handleSliderChange.bind(this));
 
             // Add save buton
             save.setAttribute('href', '#');
             save.className = 'medium-editor-toobar-save';
-            save.innerHTML = this.base.options.buttonLabels === 'fontawesome' ?
+            save.innerHTML = this.getEditorOption('buttonLabels') === 'fontawesome' ?
                              '<i class="fa fa-check"></i>' :
                              '&#10003;';
             form.appendChild(save);
 
             // Handle save button clicks (capture)
-            this.base.on(save, 'click', this.handleSaveClick.bind(this), true);
+            this.on(save, 'click', this.handleSaveClick.bind(this), true);
 
             // Add close button
             close.setAttribute('href', '#');
             close.className = 'medium-editor-toobar-close';
-            close.innerHTML = this.base.options.buttonLabels === 'fontawesome' ?
+            close.innerHTML = this.getEditorOption('buttonLabels') === 'fontawesome' ?
                               '<i class="fa fa-times"></i>' :
                               '&times;';
             form.appendChild(close);
 
             // Handle close button clicks
-            this.base.on(close, 'click', this.handleCloseClick.bind(this));
+            this.on(close, 'click', this.handleCloseClick.bind(this));
 
             return form;
         },
@@ -151,7 +155,7 @@ var FontSizeForm;
             if (size === '4') {
                 this.clearFontSize();
             } else {
-                this.base.execAction('fontSize', { size: size });
+                this.execAction('fontSize', { size: size });
             }
         },
 

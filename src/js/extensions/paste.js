@@ -48,7 +48,6 @@ var PasteHandler;
     /*jslint regexp: false*/
 
     PasteHandler = Extension.extend({
-
         /* Paste Options */
 
         /* forcePlainText: [boolean]
@@ -80,14 +79,12 @@ var PasteHandler;
         cleanTags: ['meta'],
 
         /* ----- internal options needed from base ----- */
-        'window': window,
-        'document': document,
-        targetBlank: false,
-        disableReturn: false,
+        targetBlank: false, // deprecated (should use .getEditorOption() instead)
+        disableReturn: false, // deprecated (should use .getEditorOption() instead)
 
         init: function () {
             if (this.forcePlainText || this.cleanPastedHTML) {
-                this.base.subscribe('editablePaste', this.handlePaste.bind(this));
+                this.subscribe('editablePaste', this.handlePaste.bind(this));
             }
         },
 
@@ -152,43 +149,38 @@ var PasteHandler;
                 text = text.replace(replacements[i][0], replacements[i][1]);
             }
 
-            if (multiline) {
-                // double br's aren't converted to p tags, but we want paragraphs.
-                elList = text.split('<br><br>');
+            if (!multiline) {
+                return this.pasteHTML(text);
+            }
 
-                this.pasteHTML('<p>' + elList.join('</p><p>') + '</p>');
+            // double br's aren't converted to p tags, but we want paragraphs.
+            elList = text.split('<br><br>');
 
-                try {
-                    this.document.execCommand('insertText', false, '\n');
-                } catch (ignore) { }
+            this.pasteHTML('<p>' + elList.join('</p><p>') + '</p>');
 
-                // block element cleanup
-                elList = el.querySelectorAll('a,p,div,br');
-                for (i = 0; i < elList.length; i += 1) {
-                    workEl = elList[i];
+            try {
+                this.document.execCommand('insertText', false, '\n');
+            } catch (ignore) { }
 
-                    // Microsoft Word replaces some spaces with newlines.
-                    // While newlines between block elements are meaningless, newlines within
-                    // elements are sometimes actually spaces.
-                    workEl.innerHTML = workEl.innerHTML.replace(/\n/gi, ' ');
+            // block element cleanup
+            elList = el.querySelectorAll('a,p,div,br');
+            for (i = 0; i < elList.length; i += 1) {
+                workEl = elList[i];
 
-                    switch (workEl.tagName.toLowerCase()) {
-                        case 'a':
-                            if (this.targetBlank) {
-                                Util.setTargetBlank(workEl);
-                            }
-                            break;
-                        case 'p':
-                        case 'div':
-                            this.filterCommonBlocks(workEl);
-                            break;
-                        case 'br':
-                            this.filterLineBreak(workEl);
-                            break;
-                    }
+                // Microsoft Word replaces some spaces with newlines.
+                // While newlines between block elements are meaningless, newlines within
+                // elements are sometimes actually spaces.
+                workEl.innerHTML = workEl.innerHTML.replace(/\n/gi, ' ');
+
+                switch (workEl.tagName.toLowerCase()) {
+                    case 'p':
+                    case 'div':
+                        this.filterCommonBlocks(workEl);
+                        break;
+                    case 'br':
+                        this.filterLineBreak(workEl);
+                        break;
                 }
-            } else {
-                this.pasteHTML(text);
             }
         },
 
@@ -211,6 +203,11 @@ var PasteHandler;
 
             for (i = 0; i < elList.length; i += 1) {
                 workEl = elList[i];
+
+                if ('a' === workEl.tagName.toLowerCase() && this.targetBlank) {
+                    Util.setTargetBlank(workEl);
+                }
+
                 Util.cleanupAttrs(workEl, options.cleanAttrs);
                 Util.cleanupTags(workEl, options.cleanTags);
             }
@@ -229,7 +226,6 @@ var PasteHandler;
         },
 
         filterLineBreak: function (el) {
-
             if (this.isCommonBlock(el.previousElementSibling)) {
                 // remove stray br's following common block elements
                 this.removeWithParent(el);
@@ -289,5 +285,4 @@ var PasteHandler;
             }
         }
     });
-
 }());

@@ -5,6 +5,59 @@
 describe('Autolink', function () {
     'use strict';
 
+    describe('extension', function () {
+
+        beforeEach(function () {
+            setupTestHelpers.call(this);
+            this.el = this.createElement('div', 'editor', '');
+        });
+
+        afterEach(function () {
+            this.cleanupTest();
+        });
+
+        it('should turn off browser auto-link during initialization', function () {
+            var autoUrlDetectTurnedOn = true,
+                origExecCommand = document.execCommand;
+            spyOn(document, 'execCommand').and.callFake(function (command, showUi, val) {
+                if (command === 'AutoUrlDetect') {
+                    autoUrlDetectTurnedOn = val;
+                }
+                return origExecCommand.apply(document, arguments);
+            });
+            this.newMediumEditor('.editor', {
+                autoLink: true
+            });
+            expect(autoUrlDetectTurnedOn).toBe(false);
+        });
+
+        it('should reset browser auto-link (if supported) during destroy', function () {
+            var autoUrlDetectTurnedOn = true,
+                origExecCommand = document.execCommand,
+                origQCS = document.queryCommandSupported;
+            spyOn(document, 'execCommand').and.callFake(function (command, showUi, val) {
+                if (command === 'AutoUrlDetect') {
+                    autoUrlDetectTurnedOn = val;
+                }
+                return origExecCommand.apply(document, arguments);
+            });
+            spyOn(document, 'queryCommandSupported').and.callFake(function (command) {
+                if (command === 'AutoUrlDetect') {
+                    return true;
+                }
+                return origQCS.apply(document, arguments);
+            });
+
+            var editor = this.newMediumEditor('.editor', {
+                autoLink: true
+            });
+
+            expect(autoUrlDetectTurnedOn).toBe(false);
+            editor.destroy();
+            expect(autoUrlDetectTurnedOn).toBe(true);
+        });
+    });
+
     describe('integration', function () {
 
         beforeEach(function () {
@@ -51,9 +104,10 @@ describe('Autolink', function () {
                 'en.wikipedia.org/wiki/Embassy_of_China_in_Washington,_D.C.'
             ];
 
-            function triggerAutolinking(element) {
+            function triggerAutolinking(element, key) {
+                var keyPressed = key || Util.keyCode.SPACE;
                 fireEvent(element, 'keypress', {
-                    keyCode: Util.keyCode.SPACE
+                    keyCode: keyPressed
                 });
                 jasmine.clock().tick(1);
             }
@@ -120,6 +174,45 @@ describe('Autolink', function () {
                 expect(links[0].getAttribute('href')).toBe('http://www.example.com');
                 expect(links[0].firstChild.getAttribute('data-auto-link')).toBe('true');
                 expect(links[0].textContent).toBe('http://www.example.com');
+            });
+
+            it('should auto-link text on all SPACE or ENTER', function () {
+                var links;
+                this.el.innerHTML = 'http://www.example.enter';
+
+                selectElementContentsAndFire(this.el);
+                triggerAutolinking(this.el, Util.keyCode.ENTER);
+                links = this.el.getElementsByTagName('a');
+                expect(links.length).toBe(1);
+                expect(links[0].getAttribute('href')).toBe('http://www.example.enter');
+                expect(links[0].firstChild.getAttribute('data-auto-link')).toBe('true');
+                expect(links[0].textContent).toBe('http://www.example.enter');
+
+                this.el.innerHTML = 'http://www.example.space';
+
+                selectElementContentsAndFire(this.el);
+                triggerAutolinking(this.el, Util.keyCode.SPACE);
+                links = this.el.getElementsByTagName('a');
+                expect(links.length).toBe(1);
+                expect(links[0].getAttribute('href')).toBe('http://www.example.space');
+                expect(links[0].firstChild.getAttribute('data-auto-link')).toBe('true');
+                expect(links[0].textContent).toBe('http://www.example.space');
+            });
+
+            it('should auto-link text on blur', function () {
+                var links;
+                this.el.innerHTML = 'http://www.example.blur';
+
+                selectElementContentsAndFire(this.el);
+
+                fireEvent(this.el, 'blur');
+                jasmine.clock().tick(1);
+
+                links = this.el.getElementsByTagName('a');
+                expect(links.length).toBe(1);
+                expect(links[0].getAttribute('href')).toBe('http://www.example.blur');
+                expect(links[0].firstChild.getAttribute('data-auto-link')).toBe('true');
+                expect(links[0].textContent).toBe('http://www.example.blur');
             });
 
             it('should auto-link link within basic text', function () {

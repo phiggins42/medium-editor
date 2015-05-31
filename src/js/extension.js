@@ -107,6 +107,15 @@ var Extension;
          */
         checkState: undefined,
 
+        /* destroy: [function ()]
+         *
+         * This method should remove any created html, custom event handlers
+         * or any other cleanup tasks that should be performed.
+         * If implemented, this function will be called when MediumEditor's
+         * destroy method has been called.
+         */
+        destroy: undefined,
+
         /* As alternatives to checkState, these functions provide a more structured
          * path to updating the state of an extension (usually a button) whenever
          * the state of the editor & toolbar are updated.
@@ -193,6 +202,58 @@ var Extension;
          * passed via the 'ownerDocument' optin to MediumEditor
          * and is the global 'document' object by default
          */
-        'document': undefined
+        'document': undefined,
+
+        /* getEditorElements: [function ()]
+         *
+         * Helper function which returns an array containing
+         * all the contenteditable elements for this instance
+         * of MediumEditor
+         */
+        getEditorElements: function () {
+            return this.base.elements;
+        },
+
+        /* getEditorId: [function ()]
+         *
+         * Helper function which returns a unique identifier
+         * for this instance of MediumEditor
+         */
+        getEditorId: function () {
+            return this.base.id;
+        },
+
+        /* getEditorOptions: [function (option)]
+         *
+         * Helper function which returns the value of an option
+         * used to initialize this instance of MediumEditor
+         */
+        getEditorOption: function (option) {
+            return this.base.options[option];
+        }
     };
+
+    /* List of method names to add to the prototype of Extension
+     * Each of these methods will be defined as helpers that
+     * just call directly into the MediumEditor instance.
+     *
+     * example for 'on' method:
+     * Extension.prototype.on = function () {
+     *     return this.base.on.apply(this.base, arguments);
+     * }
+     */
+    [
+        // general helpers
+        'execAction',
+
+        // event handling
+        'on',
+        'off',
+        'subscribe'
+
+    ].forEach(function (helper) {
+        Extension.prototype[helper] = function () {
+            return this.base[helper].apply(this.base, arguments);
+        };
+    });
 })();

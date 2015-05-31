@@ -80,6 +80,32 @@ var Util;
             return false;
         },
 
+        /**
+         * Returns true if the key associated to the event is inside keys array
+         *
+         * @see : https://github.com/jquery/jquery/blob/0705be475092aede1eddae01319ec931fb9c65fc/src/event.js#L473-L484
+         * @see : http://stackoverflow.com/q/4471582/569101
+         */
+        isKey: function (event, keys) {
+            var keyCode = event.which;
+
+            // getting the key code from event
+            if (null === keyCode) {
+                keyCode = event.charCode !== null ? event.charCode : event.keyCode;
+            }
+
+            // it's not an array let's just compare strings!
+            if (false === Array.isArray(keys)) {
+                return keyCode === keys;
+            }
+
+            if (-1 === keys.indexOf(keyCode)) {
+                return false;
+            }
+
+            return true;
+        },
+
         parentElements: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'pre'],
 
         extend: function extend(/* dest, source1, source2, ...*/) {
@@ -275,43 +301,25 @@ var Util;
         },
 
         getSelectionRange: function (ownerDocument) {
-            var selection = ownerDocument.getSelection();
-            if (selection.rangeCount === 0) {
-                return null;
-            }
-            return selection.getRangeAt(0);
+            this.deprecated('Util.getSelectionRange', 'Selection.getSelectionRange', 'v5.0.0');
+
+            return Selection.getSelectionRange(ownerDocument);
         },
 
-        // http://stackoverflow.com/questions/1197401/how-can-i-get-the-element-the-caret-is-in-with-javascript-when-using-contentedi
-        // by You
         getSelectionStart: function (ownerDocument) {
-            var node = ownerDocument.getSelection().anchorNode,
-                startNode = (node && node.nodeType === 3 ? node.parentNode : node);
-            return startNode;
+            this.deprecated('Util.getSelectionStart', 'Selection.getSelectionStart', 'v5.0.0');
+
+            return Selection.getSelectionStart(ownerDocument);
         },
 
         getSelectionData: function (el) {
-            var tagName;
+            this.deprecated('Util.getSelectionData', 'Selection.getSelectionData', 'v5.0.0');
 
-            if (el && el.tagName) {
-                tagName = el.tagName.toLowerCase();
-            }
-
-            while (el && this.parentElements.indexOf(tagName) === -1) {
-                el = el.parentNode;
-                if (el && el.tagName) {
-                    tagName = el.tagName.toLowerCase();
-                }
-            }
-
-            return {
-                el: el,
-                tagName: tagName
-            };
+            return Selection.getSelectionData(el);
         },
 
         execFormatBlock: function (doc, tagName) {
-            var selectionData = this.getSelectionData(this.getSelectionStart(doc));
+            var selectionData = Selection.getSelectionData(Selection.getSelectionStart(doc));
             // FF handles blockquote differently on formatBlock
             // allowing nesting, we need to use outdent
             // https://developer.mozilla.org/en-US/docs/Rich-Text_Editing_in_Mozilla
@@ -550,7 +558,7 @@ var Util;
             for (var i = 0; i < rootNode.childNodes.length; i++) {
                 nextNode = rootNode.childNodes[i];
                 if (!firstChild) {
-                    if (Util.isDescendant(nextNode, startNode, true)) {
+                    if (this.isDescendant(nextNode, startNode, true)) {
                         firstChild = nextNode;
                     }
                 } else {
@@ -685,8 +693,9 @@ var Util;
             }, this);
         },
 
-        getClosestTag: function (el, tag) { // get the closest parent
-            return Util.traverseUp(el, function (element) {
+        // get the closest parent
+        getClosestTag: function (el, tag) {
+            return this.traverseUp(el, function (element) {
                 return element.tagName.toLowerCase() === tag.toLowerCase();
             });
         },
